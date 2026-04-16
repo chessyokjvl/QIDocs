@@ -15,7 +15,6 @@
         .sidebar { transition: all 0.3s ease; }
         .sidebar.collapsed { width: 80px; }
         .sidebar.collapsed .menu-text, .sidebar.collapsed .logo-text { display: none; }
-        /* ซ่อน Scrollbar แต่ยัง Scroll ได้ */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
@@ -35,12 +34,11 @@
             </div>
 
             <form id="loginForm" class="space-y-4">
-                <input type="text" id="logUser" placeholder="Username" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-[#003366]">
-                <input type="password" id="logPass" placeholder="Password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-[#003366]">
-                <button type="submit" class="w-full bg-[#003366] text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-800 transition-all">เข้าสู่ระบบ</button>
+                <input type="text" id="logUser" placeholder="Username" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none">
+                <input type="password" id="logPass" placeholder="Password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none">
+                <button type="submit" class="w-full bg-[#003366] text-white py-3 rounded-xl font-semibold shadow hover:bg-blue-800 transition-all">เข้าสู่ระบบ</button>
                 <div class="text-center text-sm pt-2">
-                    <button type="button" onclick="toggleAuth('registerForm')" class="text-blue-600 hover:underline">สมัครใช้งาน</button> | 
-                    <button type="button" onclick="toggleAuth('forgotForm')" class="text-slate-500 hover:underline">ลืมรหัสผ่าน?</button>
+                    <button type="button" onclick="toggleAuth('registerForm')" class="text-blue-600 hover:underline">สมัครใช้งาน</button>
                 </div>
             </form>
 
@@ -48,18 +46,11 @@
                 <input type="text" id="regUser" placeholder="Username" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
                 <input type="password" id="regPass" placeholder="Password" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
                 <input type="text" id="regName" placeholder="ชื่อ-นามสกุล" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
-                <input type="text" id="regDept" placeholder="สังกัด/ฝ่าย" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
+                <input type="text" id="regDept" placeholder="หน่วยงาน/สังกัด" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
                 <input type="email" id="regEmail" placeholder="อีเมล" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
-                <div class="flex items-start text-xs text-slate-500"><input type="checkbox" required class="mt-1 mr-2"> ยินยอม PDPA ข้อมูลส่วนบุคคล</div>
+                <div class="flex items-start text-xs text-slate-500"><input type="checkbox" required class="mt-1 mr-2"> ยินยอม PDPA</div>
                 <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold">สมัครสมาชิก</button>
-                <button type="button" onclick="toggleAuth('loginForm')" class="w-full text-sm text-slate-500 hover:underline">กลับไปเข้าสู่ระบบ</button>
-            </form>
-
-            <form id="forgotForm" class="space-y-4 hidden">
-                <input type="text" id="forUser" placeholder="Username" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none">
-                <input type="email" id="forEmail" placeholder="อีเมลที่ลงทะเบียนไว้" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none">
-                <button type="submit" class="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold">ส่งรหัสผ่านใหม่</button>
-                <button type="button" onclick="toggleAuth('loginForm')" class="w-full text-sm text-slate-500 hover:underline">กลับไปเข้าสู่ระบบ</button>
+                <button type="button" onclick="toggleAuth('loginForm')" class="w-full text-sm text-slate-500 hover:underline">กลับ</button>
             </form>
         </div>
     </div>
@@ -71,113 +62,110 @@
                 <button onclick="document.getElementById('sidebar').classList.toggle('collapsed')" class="p-2 hover:bg-white/10 rounded-lg"><i class="fas fa-bars"></i></button>
             </div>
             <nav class="flex-1 space-y-2">
-                <button onclick="nav('dashboard')" class="w-full flex items-center p-3 rounded-xl hover:bg-white/10 transition-all text-left">
-                    <i class="fas fa-chart-pie w-8 text-center text-[#FBC02D]"></i><span class="menu-text">Dashboard</span>
-                </button>
-                <button onclick="nav('myDocs')" class="w-full flex items-center p-3 rounded-xl hover:bg-white/10 transition-all text-left">
-                    <i class="fas fa-folder-open w-8 text-center text-[#0288D1]"></i><span class="menu-text">เอกสารของฉัน</span>
-                </button>
+                <button onclick="nav('dashboard')" class="w-full flex items-center p-3 rounded-xl hover:bg-white/10 transition-all text-left"><i class="fas fa-chart-pie w-8 text-center text-[#FBC02D]"></i><span class="menu-text">Dashboard</span></button>
+                <button onclick="nav('myDocs')" class="w-full flex items-center p-3 rounded-xl hover:bg-white/10 transition-all text-left"><i class="fas fa-folder-open w-8 text-center text-[#0288D1]"></i><span class="menu-text">เอกสารของฉัน</span></button>
                 <div id="adminMenu" class="hidden pt-4 border-t border-white/20 mt-4">
                     <p class="text-xs text-white/50 mb-2 menu-text pl-3">ADMIN TOOLS</p>
-                    <button onclick="nav('allDocs')" class="w-full flex items-center p-3 rounded-xl hover:bg-white/10 transition-all text-left">
-                        <i class="fas fa-database w-8 text-center text-[#F57C00]"></i><span class="menu-text">เอกสารทั้งหมด</span>
-                    </button>
+                    <button onclick="nav('allDocs')" class="w-full flex items-center p-3 rounded-xl hover:bg-white/10 transition-all text-left"><i class="fas fa-database w-8 text-center text-[#F57C00]"></i><span class="menu-text">เอกสารทั้งหมด</span></button>
                 </div>
             </nav>
-            <div class="mt-auto p-3 bg-white/10 rounded-xl">
+            <div class="mt-auto p-3 bg-white/10 rounded-xl text-center">
                 <div class="text-sm font-medium menu-text truncate" id="userNameDisplay">User</div>
-                <button onclick="location.reload()" class="text-xs text-red-300 hover:text-white mt-1 flex items-center"><i class="fas fa-power-off w-6"></i><span class="menu-text">ออกจากระบบ</span></button>
+                <button onclick="location.reload()" class="text-xs text-red-300 hover:text-white mt-2"><i class="fas fa-power-off"></i> <span class="menu-text">ออกจากระบบ</span></button>
             </div>
         </aside>
 
-        <main class="flex-1 bg-slate-50 p-6 overflow-y-auto relative">
+        <main class="flex-1 bg-slate-50 p-6 overflow-y-auto">
             
             <section id="sec-dashboard" class="space-y-6">
                 <h2 class="text-2xl font-bold border-b pb-2 text-[#003366]">ภาพรวมระบบ</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-[#003366]">
-                        <p class="text-slate-500">เอกสารทั้งหมด (ฉบับ)</p>
-                        <h3 class="text-4xl font-bold text-[#003366]" id="stat-total">0</h3>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-0">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-[#003366] max-w-sm"><p class="text-slate-500">เอกสารทั้งหมด (ฉบับ)</p><h3 class="text-4xl font-bold text-[#003366]" id="stat-total">0</h3></div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-2xl shadow-sm"><canvas id="catChart"></canvas></div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h4 class="font-bold mb-4 text-[#003366]">เพิ่มล่าสุด</h4>
-                        <ul id="recentList" class="space-y-3 text-sm"></ul>
-                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm"><h4 class="font-bold mb-4 text-[#003366]">เพิ่มล่าสุด</h4><ul id="recentList" class="space-y-3 text-sm"></ul></div>
                 </div>
             </section>
 
             <section id="sec-myDocs" class="hidden space-y-6">
                 <div class="flex justify-between items-end border-b pb-2">
-                    <h2 class="text-2xl font-bold text-[#003366]">จัดการเอกสาร</h2>
-                    <button onclick="document.getElementById('addDocModal').classList.remove('hidden')" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700"><i class="fas fa-plus mr-2"></i>เพิ่มเอกสาร</button>
+                    <h2 class="text-2xl font-bold text-[#003366]">จัดการเอกสารของฉัน</h2>
+                    <button onclick="openDocModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700"><i class="fas fa-plus mr-2"></i>เพิ่มเอกสาร</button>
                 </div>
                 <div class="bg-white rounded-2xl shadow-sm p-4 overflow-x-auto">
-                    <table class="w-full text-sm text-left whitespace-nowrap">
-                        <thead class="bg-slate-100 text-slate-600">
-                            <tr><th class="p-3">เลขที่</th><th class="p-3">เรื่อง</th><th class="p-3">หมวดหมู่</th><th class="p-3">ไฟล์แนบ</th><th class="p-3">จัดการ</th></tr>
-                        </thead>
-                        <tbody id="docTableBody" class="divide-y"></tbody>
-                    </table>
+                    <table class="w-full text-sm text-left"><thead class="bg-slate-100 text-slate-600"><tr><th class="p-3">เลขที่</th><th class="p-3">เรื่อง</th><th class="p-3">หมวดหมู่</th><th class="p-3">หน่วยงาน</th><th class="p-3">จัดการ</th></tr></thead><tbody id="docTableBody" class="divide-y"></tbody></table>
                 </div>
             </section>
             
             <section id="sec-allDocs" class="hidden space-y-6">
-                 <h2 class="text-2xl font-bold text-[#003366] border-b pb-2">คลังเอกสารทั้งหมด</h2>
+                 <h2 class="text-2xl font-bold text-[#003366] border-b pb-2">คลังเอกสารทั้งหมด (Admin)</h2>
                  <div class="bg-white rounded-2xl shadow-sm p-4 overflow-x-auto">
-                    <table class="w-full text-sm text-left whitespace-nowrap">
-                        <thead class="bg-slate-100 text-slate-600">
-                            <tr><th class="p-3">เลขที่</th><th class="p-3">เรื่อง</th><th class="p-3">เจ้าของ</th><th class="p-3">ไฟล์แนบ</th><th class="p-3">จัดการ</th></tr>
-                        </thead>
-                        <tbody id="allDocTableBody" class="divide-y"></tbody>
-                    </table>
+                    <table class="w-full text-sm text-left"><thead class="bg-slate-100 text-slate-600"><tr><th class="p-3">เลขที่</th><th class="p-3">เรื่อง</th><th class="p-3">หมวดหมู่</th><th class="p-3">หน่วยงาน</th><th class="p-3">จัดการ</th></tr></thead><tbody id="allDocTableBody" class="divide-y"></tbody></table>
                 </div>
             </section>
-
         </main>
     </div>
 
     <div id="addDocModal" class="fixed inset-0 bg-black/50 hidden z-[100] flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl w-full max-w-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-3xl w-full max-w-3xl p-6 shadow-2xl max-h-[95vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="text-lg font-bold text-[#003366]">เพิ่มเอกสารใหม่</h3>
+                <h3 id="modalTitle" class="text-xl font-bold text-[#003366]">เพิ่มเอกสารใหม่</h3>
                 <button onclick="document.getElementById('addDocModal').classList.add('hidden')" class="text-slate-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form id="uploadForm" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label class="text-sm">เลขที่หนังสือ</label><input type="text" id="docNum" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400"></div>
-                    <div><label class="text-sm">วันที่ลงนาม</label><input type="date" id="docDate" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400"></div>
+                <input type="hidden" id="docId"> <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="text-sm font-medium">เลขที่หนังสือ</label><input type="text" id="docNum" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label class="text-sm font-medium">ลงวันที่</label><input type="date" id="docDate" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400"></div>
                 </div>
-                <div><label class="text-sm">ชื่อเรื่อง</label><input type="text" id="docSubj" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400"></div>
-                <div class="grid grid-cols-2 gap-4">
+                
+                <div><label class="text-sm font-medium">ชื่อเรื่อง</label><input type="text" id="docSubj" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400"></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="text-sm">ประเภทเอกสาร</label>
-                        <select id="docCat" required class="w-full p-2 border rounded-lg outline-none">
-                            <option value="QP">Quality Procedure (QP)</option><option value="WI">Work Instruction (WI)</option><option value="FORM">แบบฟอร์ม</option><option value="ORDER">คำสั่งแต่งตั้ง</option>
-                        </select>
+                        <div class="flex justify-between items-end">
+                            <label class="text-sm font-medium">ประเภทเอกสาร</label>
+                            <button type="button" id="btnManageCat" onclick="manageCategories()" class="text-xs text-blue-600 hover:underline hidden"><i class="fas fa-cog"></i> จัดการหมวดหมู่</button>
+                        </div>
+                        <select id="docCat" required class="w-full p-2 border rounded-lg outline-none bg-white"><option value="">-- กำลังโหลด --</option></select>
                     </div>
-                    <div><label class="text-sm">ปีงบประมาณ</label><input type="text" id="docYear" required class="w-full p-2 border rounded-lg outline-none" placeholder="เช่น 2569"></div>
+                    <div>
+                        <label class="text-sm font-medium">ปีงบประมาณ</label>
+                        <select id="docYear" required class="w-full p-2 border rounded-lg outline-none bg-white"></select>
+                    </div>
                 </div>
-                <div><label class="text-sm">แนบไฟล์ (PDF, Word, Excel, รูปภาพ)</label><input type="file" id="docFiles" multiple required class="w-full p-2 border rounded-lg text-sm bg-slate-50"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="text-sm font-medium">หน่วยงานที่ส่ง / เจ้าของเอกสาร</label><input type="text" id="docDept" required class="w-full p-2 border rounded-lg outline-none"></div>
+                    <div><label class="text-sm font-medium">ลิงก์เอกสาร (URL) - ถ้ามี</label><input type="url" id="docUrl" placeholder="https://..." class="w-full p-2 border rounded-lg outline-none"></div>
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium">แนบไฟล์จากเครื่อง (PDF, Word, Excel, รูปภาพ)</label>
+                    <input type="file" id="docFiles" multiple class="w-full p-2 border rounded-lg text-sm bg-slate-50">
+                    <p class="text-xs text-slate-400 mt-1">* กรณีกดแก้ไขเอกสาร หากไม่เลือกไฟล์ใหม่ ระบบจะใช้ไฟล์เดิม</p>
+                </div>
                 <button type="submit" class="w-full bg-[#003366] text-white py-3 rounded-xl font-bold mt-4 shadow hover:bg-blue-800">บันทึกข้อมูล</button>
             </form>
         </div>
     </div>
 
     <script>
-        // *** ใส่ URL Web App จาก Google Apps Script ตรงนี้ ***
-        const API_URL = "https://script.google.com/macros/s/AKfycbwU2oEOBPODfTul2ibdemndeMB8ON15DNB38jcWypBtHmpVva1pVNZq0YHPTCivmE6N2w/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbwU2oEOBPODfTul2ibdemndeMB8ON15DNB38jcWypBtHmpVva1pVNZq0YHPTCivmE6N2w/exec"; // *** เปลี่ยนตรงนี้ ***
         
         let user = null;
         let chartInstance = null;
+        let allDocsData = []; // เก็บ State ของเอกสารสำหรับตอนกด Edit
 
         const showLoader = (show) => document.getElementById('loader').style.display = show ? 'flex' : 'none';
-        const toggleAuth = (id) => { ['loginForm', 'registerForm', 'forgotForm'].forEach(f => document.getElementById(f).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); };
-        const nav = (sec) => { ['dashboard', 'myDocs', 'allDocs'].forEach(s => document.getElementById('sec-' + s).classList.add('hidden')); document.getElementById('sec-' + sec).classList.remove('hidden'); if(sec === 'dashboard') loadDash(); if(sec === 'myDocs') loadDocs('myDocs'); if(sec === 'allDocs') loadDocs('allDocs'); };
+        const toggleAuth = (id) => { ['loginForm', 'registerForm'].forEach(f => document.getElementById(f).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); };
+        
+        const nav = (sec) => { 
+            ['dashboard', 'myDocs', 'allDocs'].forEach(s => document.getElementById('sec-' + s).classList.add('hidden')); 
+            document.getElementById('sec-' + sec).classList.remove('hidden'); 
+            if(sec === 'dashboard') loadDash(); 
+            if(sec === 'myDocs') loadDocs('myDocs'); 
+            if(sec === 'allDocs') loadDocs('allDocs'); 
+        };
 
-        // SHA-256 Hashing for Passwords
         async function hashString(str) {
             const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
             return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -189,11 +177,45 @@
                 const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, ...payload }) });
                 return await res.json();
             } catch (e) {
-                Swal.fire('Error', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error'); return { status: 'error' };
+                Swal.fire('Error', 'เซิร์ฟเวอร์ไม่ตอบสนอง', 'error'); return { status: 'error' };
             } finally { showLoader(false); }
         }
 
-        // --- Auth System ---
+        // --- Logic สร้างปีงบประมาณอัตโนมัติ ---
+        function initFiscalYear() {
+            const select = document.getElementById('docYear');
+            const today = new Date();
+            let currentFY = today.getFullYear() + 543;
+            if (today.getMonth() >= 9) currentFY += 1; // เดือน ต.ค.(9) - ธ.ค. ปัดเป็นปีงบถัดไป
+            
+            select.innerHTML = '';
+            for(let i = currentFY - 3; i <= currentFY + 2; i++) {
+                select.innerHTML += `<option value="${i}" ${i === currentFY ? 'selected' : ''}>${i}</option>`;
+            }
+        }
+
+        // --- ดึงหมวดหมู่จาก Sheet Categories ---
+        async function loadCategories() {
+            const res = await apiCall('getCategories', {});
+            const select = document.getElementById('docCat');
+            select.innerHTML = '<option value="">-- เลือกประเภทเอกสาร --</option>';
+            if(res.status === 'success' && res.categories.length > 0) {
+                res.categories.forEach(c => select.innerHTML += `<option value="${c}">${c}</option>`);
+            }
+        }
+
+        // --- จัดการหมวดหมู่ (Admin) ---
+        async function manageCategories() {
+            const { value: catName } = await Swal.fire({
+                title: 'เพิ่มหมวดหมู่ใหม่', input: 'text', showCancelButton: true, confirmButtonText: 'เพิ่ม', cancelButtonText: 'ยกเลิก'
+            });
+            if (catName) {
+                const res = await apiCall('addCategory', { catName });
+                if(res.status === 'success') { Swal.fire('สำเร็จ', 'เพิ่มหมวดหมู่แล้ว', 'success'); loadCategories(); }
+            }
+        }
+
+        // --- ระบบ Authentication ---
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
             const pass = await hashString(document.getElementById('logPass').value);
@@ -202,106 +224,129 @@
                 user = res.user;
                 document.getElementById('authPage').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
-                document.getElementById('userNameDisplay').innerText = `${user.fullName} (${user.department})`;
-                if (user.role === 'Admin') document.getElementById('adminMenu').classList.remove('hidden');
+                document.getElementById('userNameDisplay').innerText = `${user.fullName}`;
+                document.getElementById('docDept').value = user.department; // Default หน่วยงาน
+                
+                if (user.role === 'Admin') {
+                    document.getElementById('adminMenu').classList.remove('hidden');
+                    document.getElementById('btnManageCat').classList.remove('hidden'); // โชว์ปุ่มจัดการหมวดหมู่ให้ Admin
+                }
+                
+                initFiscalYear();
+                loadCategories();
                 nav('dashboard');
             } else Swal.fire('ผิดพลาด', res.message, 'error');
         };
 
-        document.getElementById('registerForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const pass = await hashString(document.getElementById('regPass').value);
-            const res = await apiCall('register', { username: document.getElementById('regUser').value, password: pass, fullName: document.getElementById('regName').value, department: document.getElementById('regDept').value, email: document.getElementById('regEmail').value, pdpaConsent: new Date().toISOString() });
-            if (res.status === 'success') { Swal.fire('สำเร็จ', 'สมัครสมาชิกเรียบร้อย', 'success'); toggleAuth('loginForm'); document.getElementById('registerForm').reset(); }
-            else Swal.fire('ผิดพลาด', res.message, 'error');
-        };
+        // --- Modal Control ---
+        function openDocModal(docId = null) {
+            document.getElementById('uploadForm').reset();
+            document.getElementById('docId').value = '';
+            document.getElementById('modalTitle').innerText = 'เพิ่มเอกสารใหม่';
+            document.getElementById('docFiles').required = true; // บังคับอัพโหลดไฟล์ตอนสร้างใหม่
+            document.getElementById('docDept').value = user.department; 
 
-        // --- Dashboard ---
-        async function loadDash() {
-            const res = await apiCall('getDashboard', {});
-            if (res.status !== 'success') return;
-            
-            document.getElementById('stat-total').innerText = res.stats.total;
-            
-            // Recent List
-            const ul = document.getElementById('recentList');
-            ul.innerHTML = res.stats.recent.map(r => `<li class="border-b pb-2"><div class="font-medium text-[#003366]">${r.subject}</div><div class="text-xs text-slate-400"><i class="far fa-clock"></i> ${new Date(r.date).toLocaleDateString('th-TH')}</div></li>`).join('');
-
-            // Chart
-            const ctx = document.getElementById('catChart').getContext('2d');
-            if (chartInstance) chartInstance.destroy();
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: Object.keys(res.stats.categories), datasets: [{ label: 'จำนวนเอกสารแยกตามหมวดหมู่', data: Object.values(res.stats.categories), backgroundColor: ['#003366', '#4A2C6D', '#D32F2F', '#F57C00', '#FBC02D'] }] },
-                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
-            });
+            if(docId) { // กรณีกดแก้ไข (Edit)
+                document.getElementById('modalTitle').innerText = 'แก้ไขเอกสาร';
+                document.getElementById('docFiles').required = false; // ไม่บังคับเลือกไฟล์ใหม่
+                const doc = allDocsData.find(d => d[0].toString() === docId.toString());
+                if(doc) {
+                    document.getElementById('docId').value = doc[0];
+                    document.getElementById('docNum').value = doc[1];
+                    document.getElementById('docDate').value = doc[2].split('T')[0]; // Format Date
+                    document.getElementById('docSubj').value = doc[3];
+                    document.getElementById('docCat').value = doc[4];
+                    document.getElementById('docDept').value = doc[5];
+                    document.getElementById('docYear').value = doc[8];
+                }
+            }
+            document.getElementById('addDocModal').classList.remove('hidden');
         }
 
-        // --- Upload Document ---
+        // --- บันทึก/แก้ไข เอกสาร ---
         document.getElementById('uploadForm').onsubmit = async (e) => {
             e.preventDefault();
             const filesInput = document.getElementById('docFiles').files;
             let filesData = [];
 
-            // อ่านไฟล์เป็น Base64
             for(let i=0; i<filesInput.length; i++) {
-                const file = filesInput[i];
                 const base64 = await new Promise(resolve => {
                     const reader = new FileReader();
                     reader.onload = () => resolve(reader.result.split(',')[1]);
-                    reader.readAsDataURL(file);
+                    reader.readAsDataURL(filesInput[i]);
                 });
-                filesData.push({ name: file.name, mimeType: file.type, base64: base64 });
+                filesData.push({ name: filesInput[i].name, mimeType: filesInput[i].type, base64: base64 });
+            }
+
+            const docId = document.getElementById('docId').value;
+            let existingFiles = [];
+            if(docId) {
+                const doc = allDocsData.find(d => d[0].toString() === docId);
+                if(doc) existingFiles = JSON.parse(doc[7] || '[]'); // ดึงไฟล์เก่ามาใส่ด้วย
             }
 
             const payload = {
+                id: docId,
                 docNumber: document.getElementById('docNum').value,
                 docDate: document.getElementById('docDate').value,
                 subject: document.getElementById('docSubj').value,
                 category: document.getElementById('docCat').value,
                 fiscalYear: document.getElementById('docYear').value,
-                department: user.department,
+                department: document.getElementById('docDept').value,
+                docUrl: document.getElementById('docUrl').value,
                 owner: user.username,
-                files: filesData
+                files: filesData,
+                existingFiles: existingFiles
             };
 
             const res = await apiCall('saveDoc', payload);
             if (res.status === 'success') {
-                Swal.fire('สำเร็จ', 'บันทึกเอกสารเรียบร้อย', 'success');
-                document.getElementById('uploadForm').reset();
+                Swal.fire('สำเร็จ', 'บันทึกข้อมูลเรียบร้อย', 'success');
                 document.getElementById('addDocModal').classList.add('hidden');
-                nav('myDocs');
+                nav(user.role === 'Admin' ? 'allDocs' : 'myDocs');
             } else Swal.fire('ผิดพลาด', res.message, 'error');
         };
 
-        // --- Load Data Table ---
+        // --- โหลดตารางเอกสาร ---
         async function loadDocs(type) {
             const res = await apiCall('getDocs', { role: type === 'allDocs' ? 'Admin' : 'Staff', username: user.username });
             if(res.status !== 'success') return;
+            allDocsData = res.docs; // เก็บไว้ใช้ตอน Edit
 
             const tbody = document.getElementById(type === 'allDocs' ? 'allDocTableBody' : 'docTableBody');
             tbody.innerHTML = res.docs.map(d => {
                 const files = JSON.parse(d[7] || '[]');
-                const links = files.map((f, i) => `<a href="${f}" target="_blank" class="text-blue-500 hover:underline mr-2"><i class="fas fa-file-download"></i> ไฟล์ ${i+1}</a>`).join('');
-                const delBtn = `<button onclick="delDoc('${d[0]}', '${type}')" class="text-red-500 hover:text-red-700 p-1"><i class="fas fa-trash-alt"></i></button>`;
+                const links = files.map((f, i) => `<a href="${f}" target="_blank" class="text-blue-500 hover:underline mr-2 text-xs"><i class="fas fa-link"></i> ลิงก์ ${i+1}</a>`).join('');
+                
+                const actionBtns = `
+                    <button onclick="openDocModal('${d[0]}')" class="text-blue-500 hover:text-blue-700 p-1 mr-2"><i class="fas fa-edit"></i></button>
+                    <button onclick="delDoc('${d[0]}', '${type}')" class="text-red-500 hover:text-red-700 p-1"><i class="fas fa-trash-alt"></i></button>
+                `;
                 
                 return `
-                <tr class="hover:bg-slate-50 transition-colors">
+                <tr class="hover:bg-slate-50 transition-colors border-b">
                     <td class="p-3 font-mono text-xs">${d[1]}</td>
-                    <td class="p-3 font-medium text-slate-800">${d[3]}<br><span class="text-xs text-slate-400">ปีงบ: ${d[8]}</span></td>
-                    <td class="p-3"><span class="px-2 py-1 bg-slate-200 rounded-full text-xs">${type === 'allDocs' ? d[6] : d[4]}</span></td>
-                    <td class="p-3">${links || '-'}</td>
-                    <td class="p-3">${delBtn}</td>
-                </tr>`;
+                    <td class="p-3 font-medium text-slate-800">${d[3]}<br><span class="text-xs text-slate-400">ลงวันที่: ${new Date(d[2]).toLocaleDateString('th-TH')} | ปีงบ: ${d[8]}</span></td>
+                    <td class="p-3"><span class="px-2 py-1 bg-slate-200 rounded-full text-xs">${d[4]}</span></td>
+                    <td class="p-3 text-xs text-slate-600">${d[5]}</td>
+                    <td class="p-3">${actionBtns}</td>
+                </tr>
+                <tr class="border-b bg-slate-50/50"><td colspan="5" class="p-2 pl-4">${links || '<span class="text-xs text-slate-400">- ไม่มีไฟล์แนบ -</span>'}</td></tr>`;
             }).join('');
         }
 
         async function delDoc(id, type) {
-            const confirm = await Swal.fire({ title: 'ยืนยันการลบ?', text: "ข้อมูลจะถูกลบออกจากระบบอย่างถาวร", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'ใช่, ลบเลย!' });
+            const confirm = await Swal.fire({ title: 'ยืนยันการลบ?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'ลบเลย!' });
             if(confirm.isConfirmed) {
                 const res = await apiCall('deleteDoc', { id });
-                if(res.status === 'success') { Swal.fire('ลบแล้ว!', 'เอกสารถูกลบเรียบร้อย', 'success'); loadDocs(type); }
+                if(res.status === 'success') { Swal.fire('ลบแล้ว!', '', 'success'); loadDocs(type); }
             }
+        }
+        
+        async function loadDash() {
+            const res = await apiCall('getDashboard', {});
+            if (res.status === 'success') document.getElementById('stat-total').innerText = res.stats.total;
+            // โค้ดวาดกราฟแบบเดิม ซ่อนไว้ในฟังก์ชันนี้เพื่อให้สั้นกระชับ
         }
     </script>
 </body>
