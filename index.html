@@ -26,7 +26,7 @@
     </div>
 
     <div id="authPage" class="h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#003366] via-[#005599] to-[#008855] absolute z-50">
-        <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20">
+        <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 relative">
             <div class="text-center mb-6">
                 <img src="https://www.rploei.go.th/ec2/wp-content/uploads/2017/08/cropped-cropped-cropped-3.png" alt="Logo" class="mx-auto h-20 mb-2 drop-shadow-md">
                 <h1 class="text-2xl font-bold text-[#003366]">ระบบเอกสารคุณภาพ</h1>
@@ -34,23 +34,35 @@
             </div>
 
             <form id="loginForm" class="space-y-4">
-                <input type="text" id="logUser" placeholder="Username" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none">
-                <input type="password" id="logPass" placeholder="Password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none">
+                <input type="text" id="logUser" placeholder="Username" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-[#003366]">
+                <input type="password" id="logPass" placeholder="Password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-[#003366]">
                 <button type="submit" class="w-full bg-[#003366] text-white py-3 rounded-xl font-semibold shadow hover:bg-blue-800 transition-all">เข้าสู่ระบบ</button>
                 <div class="text-center text-sm pt-2">
-                    <button type="button" onclick="toggleAuth('registerForm')" class="text-blue-600 hover:underline">สมัครใช้งาน</button>
+                    <button type="button" onclick="toggleAuth('registerForm')" class="text-blue-600 hover:underline">สมัครใช้งาน</button> 
+                    <span class="text-slate-300 mx-2">|</span>
+                    <button type="button" onclick="toggleAuth('forgotForm')" class="text-slate-500 hover:underline">ลืมรหัสผ่าน?</button>
                 </div>
             </form>
 
             <form id="registerForm" class="space-y-3 hidden">
-                <input type="text" id="regUser" placeholder="Username" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
-                <input type="password" id="regPass" placeholder="Password" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
-                <input type="text" id="regName" placeholder="ชื่อ-นามสกุล" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
-                <input type="text" id="regDept" placeholder="หน่วยงาน/สังกัด" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
-                <input type="email" id="regEmail" placeholder="อีเมล" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
-                <div class="flex items-start text-xs text-slate-500"><input type="checkbox" required class="mt-1 mr-2"> ยินยอม PDPA</div>
-                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold">สมัครสมาชิก</button>
-                <button type="button" onclick="toggleAuth('loginForm')" class="w-full text-sm text-slate-500 hover:underline">กลับ</button>
+                <h2 class="text-lg font-bold text-[#003366] text-center mb-2">สมัครสมาชิกใหม่</h2>
+                <input type="text" id="regUser" placeholder="Username" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-[#003366]">
+                <input type="password" id="regPass" placeholder="Password" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-[#003366]">
+                <input type="text" id="regName" placeholder="ชื่อ-นามสกุล" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-[#003366]">
+                <input type="text" id="regDept" placeholder="หน่วยงาน/สังกัด" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-[#003366]">
+                <input type="email" id="regEmail" placeholder="อีเมล (สำหรับกู้รหัสผ่าน)" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-[#003366]">
+                <div class="flex items-start text-xs text-slate-500"><input type="checkbox" required class="mt-1 mr-2"> ยินยอมการเก็บข้อมูลส่วนบุคคล (PDPA)</div>
+                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700">ยืนยันการสมัคร</button>
+                <button type="button" onclick="toggleAuth('loginForm')" class="w-full text-sm text-slate-500 hover:underline">กลับไปหน้าเข้าสู่ระบบ</button>
+            </form>
+
+            <form id="forgotForm" class="space-y-4 hidden">
+                <h2 class="text-lg font-bold text-[#003366] text-center mb-2">ลืมรหัสผ่าน</h2>
+                <p class="text-xs text-center text-slate-500 mb-4">ระบบจะส่งรหัสผ่านใหม่ไปยังอีเมลที่ลงทะเบียนไว้</p>
+                <input type="text" id="forUser" placeholder="Username ของคุณ" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-orange-500">
+                <input type="email" id="forEmail" placeholder="อีเมลที่ลงทะเบียนไว้" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-orange-500">
+                <button type="submit" class="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600">ส่งรหัสผ่านใหม่</button>
+                <button type="button" onclick="toggleAuth('loginForm')" class="w-full text-sm text-slate-500 hover:underline">กลับไปหน้าเข้าสู่ระบบ</button>
             </form>
         </div>
     </div>
@@ -112,7 +124,9 @@
                 <button onclick="document.getElementById('addDocModal').classList.add('hidden')" class="text-slate-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form id="uploadForm" class="space-y-4">
-                <input type="hidden" id="docId"> <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="hidden" id="docId">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div><label class="text-sm font-medium">เลขที่หนังสือ</label><input type="text" id="docNum" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400"></div>
                     <div><label class="text-sm font-medium">ลงวันที่</label><input type="date" id="docDate" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400"></div>
                 </div>
@@ -149,14 +163,19 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwU2oEOBPODfTul2ibdemndeMB8ON15DNB38jcWypBtHmpVva1pVNZq0YHPTCivmE6N2w/exec"; // *** เปลี่ยนตรงนี้ ***
+        const API_URL = "https://script.google.com/macros/s/AKfycbwU2oEOBPODfTul2ibdemndeMB8ON15DNB38jcWypBtHmpVva1pVNZq0YHPTCivmE6N2w/exec"; // *** นำ URL ของ Web App มาใส่ตรงนี้ ***
         
         let user = null;
         let chartInstance = null;
-        let allDocsData = []; // เก็บ State ของเอกสารสำหรับตอนกด Edit
+        let allDocsData = []; 
 
         const showLoader = (show) => document.getElementById('loader').style.display = show ? 'flex' : 'none';
-        const toggleAuth = (id) => { ['loginForm', 'registerForm'].forEach(f => document.getElementById(f).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); };
+        
+        // ฟังก์ชันเปิด-ปิดหน้าฟอร์ม (แก้ไขให้คลุม forgotForm ด้วย)
+        const toggleAuth = (id) => { 
+            ['loginForm', 'registerForm', 'forgotForm'].forEach(f => document.getElementById(f).classList.add('hidden')); 
+            document.getElementById(id).classList.remove('hidden'); 
+        };
         
         const nav = (sec) => { 
             ['dashboard', 'myDocs', 'allDocs'].forEach(s => document.getElementById('sec-' + s).classList.add('hidden')); 
@@ -181,12 +200,11 @@
             } finally { showLoader(false); }
         }
 
-        // --- Logic สร้างปีงบประมาณอัตโนมัติ ---
         function initFiscalYear() {
             const select = document.getElementById('docYear');
             const today = new Date();
             let currentFY = today.getFullYear() + 543;
-            if (today.getMonth() >= 9) currentFY += 1; // เดือน ต.ค.(9) - ธ.ค. ปัดเป็นปีงบถัดไป
+            if (today.getMonth() >= 9) currentFY += 1; 
             
             select.innerHTML = '';
             for(let i = currentFY - 3; i <= currentFY + 2; i++) {
@@ -194,7 +212,6 @@
             }
         }
 
-        // --- ดึงหมวดหมู่จาก Sheet Categories ---
         async function loadCategories() {
             const res = await apiCall('getCategories', {});
             const select = document.getElementById('docCat');
@@ -204,7 +221,6 @@
             }
         }
 
-        // --- จัดการหมวดหมู่ (Admin) ---
         async function manageCategories() {
             const { value: catName } = await Swal.fire({
                 title: 'เพิ่มหมวดหมู่ใหม่', input: 'text', showCancelButton: true, confirmButtonText: 'เพิ่ม', cancelButtonText: 'ยกเลิก'
@@ -215,7 +231,7 @@
             }
         }
 
-        // --- ระบบ Authentication ---
+        // --- Auth System ---
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
             const pass = await hashString(document.getElementById('logPass').value);
@@ -225,11 +241,11 @@
                 document.getElementById('authPage').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
                 document.getElementById('userNameDisplay').innerText = `${user.fullName}`;
-                document.getElementById('docDept').value = user.department; // Default หน่วยงาน
+                document.getElementById('docDept').value = user.department; 
                 
                 if (user.role === 'Admin') {
                     document.getElementById('adminMenu').classList.remove('hidden');
-                    document.getElementById('btnManageCat').classList.remove('hidden'); // โชว์ปุ่มจัดการหมวดหมู่ให้ Admin
+                    document.getElementById('btnManageCat').classList.remove('hidden'); 
                 }
                 
                 initFiscalYear();
@@ -238,22 +254,47 @@
             } else Swal.fire('ผิดพลาด', res.message, 'error');
         };
 
+        document.getElementById('registerForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const pass = await hashString(document.getElementById('regPass').value);
+            const res = await apiCall('register', { username: document.getElementById('regUser').value, password: pass, fullName: document.getElementById('regName').value, department: document.getElementById('regDept').value, email: document.getElementById('regEmail').value, pdpaConsent: new Date().toISOString() });
+            if (res.status === 'success') { Swal.fire('สำเร็จ', 'สมัครสมาชิกเรียบร้อย', 'success'); toggleAuth('loginForm'); document.getElementById('registerForm').reset(); }
+            else Swal.fire('ผิดพลาด', res.message, 'error');
+        };
+
+        // --- ลืมรหัสผ่าน ---
+        document.getElementById('forgotForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const res = await apiCall('forgotPassword', {
+                username: document.getElementById('forUser').value,
+                email: document.getElementById('forEmail').value
+            });
+            
+            if (res.status === 'success') {
+                Swal.fire('สำเร็จ', res.message, 'success');
+                toggleAuth('loginForm');
+                document.getElementById('forgotForm').reset();
+            } else {
+                Swal.fire('ผิดพลาด', res.message, 'error');
+            }
+        };
+
         // --- Modal Control ---
         function openDocModal(docId = null) {
             document.getElementById('uploadForm').reset();
             document.getElementById('docId').value = '';
             document.getElementById('modalTitle').innerText = 'เพิ่มเอกสารใหม่';
-            document.getElementById('docFiles').required = true; // บังคับอัพโหลดไฟล์ตอนสร้างใหม่
+            document.getElementById('docFiles').required = true; 
             document.getElementById('docDept').value = user.department; 
 
-            if(docId) { // กรณีกดแก้ไข (Edit)
+            if(docId) { 
                 document.getElementById('modalTitle').innerText = 'แก้ไขเอกสาร';
-                document.getElementById('docFiles').required = false; // ไม่บังคับเลือกไฟล์ใหม่
+                document.getElementById('docFiles').required = false; 
                 const doc = allDocsData.find(d => d[0].toString() === docId.toString());
                 if(doc) {
                     document.getElementById('docId').value = doc[0];
                     document.getElementById('docNum').value = doc[1];
-                    document.getElementById('docDate').value = doc[2].split('T')[0]; // Format Date
+                    document.getElementById('docDate').value = doc[2].split('T')[0]; 
                     document.getElementById('docSubj').value = doc[3];
                     document.getElementById('docCat').value = doc[4];
                     document.getElementById('docDept').value = doc[5];
@@ -263,7 +304,7 @@
             document.getElementById('addDocModal').classList.remove('hidden');
         }
 
-        // --- บันทึก/แก้ไข เอกสาร ---
+        // --- Upload/Save Document ---
         document.getElementById('uploadForm').onsubmit = async (e) => {
             e.preventDefault();
             const filesInput = document.getElementById('docFiles').files;
@@ -282,7 +323,7 @@
             let existingFiles = [];
             if(docId) {
                 const doc = allDocsData.find(d => d[0].toString() === docId);
-                if(doc) existingFiles = JSON.parse(doc[7] || '[]'); // ดึงไฟล์เก่ามาใส่ด้วย
+                if(doc) existingFiles = JSON.parse(doc[7] || '[]'); 
             }
 
             const payload = {
@@ -307,11 +348,11 @@
             } else Swal.fire('ผิดพลาด', res.message, 'error');
         };
 
-        // --- โหลดตารางเอกสาร ---
+        // --- Load Tables ---
         async function loadDocs(type) {
             const res = await apiCall('getDocs', { role: type === 'allDocs' ? 'Admin' : 'Staff', username: user.username });
             if(res.status !== 'success') return;
-            allDocsData = res.docs; // เก็บไว้ใช้ตอน Edit
+            allDocsData = res.docs; 
 
             const tbody = document.getElementById(type === 'allDocs' ? 'allDocTableBody' : 'docTableBody');
             tbody.innerHTML = res.docs.map(d => {
@@ -346,7 +387,17 @@
         async function loadDash() {
             const res = await apiCall('getDashboard', {});
             if (res.status === 'success') document.getElementById('stat-total').innerText = res.stats.total;
-            // โค้ดวาดกราฟแบบเดิม ซ่อนไว้ในฟังก์ชันนี้เพื่อให้สั้นกระชับ
+            
+            const ul = document.getElementById('recentList');
+            ul.innerHTML = res.stats.recent.map(r => `<li class="border-b pb-2"><div class="font-medium text-[#003366]">${r.subject}</div><div class="text-xs text-slate-400"><i class="far fa-clock"></i> ${new Date(r.date).toLocaleDateString('th-TH')}</div></li>`).join('');
+
+            const ctx = document.getElementById('catChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: Object.keys(res.stats.categories), datasets: [{ label: 'จำนวนเอกสารแยกตามหมวดหมู่', data: Object.values(res.stats.categories), backgroundColor: ['#003366', '#4A2C6D', '#D32F2F', '#F57C00', '#FBC02D'] }] },
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+            });
         }
     </script>
 </body>
