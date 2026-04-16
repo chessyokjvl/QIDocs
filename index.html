@@ -5,320 +5,304 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบบริหารจัดการเอกสารคุณภาพ | JVL</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <style>
         body { font-family: 'Kanit', sans-serif; background-color: #f8fafc; }
-        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
         .sidebar { transition: all 0.3s ease; }
         .sidebar.collapsed { width: 80px; }
-        .z-important { position: relative; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .leading-zero-fix { font-variant-numeric: tabular-nums; }
+        .sidebar.collapsed .menu-text, .sidebar.collapsed .logo-text { display: none; }
+        /* ซ่อน Scrollbar แต่ยัง Scroll ได้ */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
-<body class="text-slate-800">
+<body class="text-slate-800 h-screen overflow-hidden">
 
-    <div id="loader" class="fixed inset-0 bg-white/80 z-[100] hidden flex items-center justify-center">
-        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600"></div>
+    <div id="loader" class="fixed inset-0 bg-white/80 z-[9999] hidden flex items-center justify-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-[#003366]"></div>
     </div>
 
-    <div id="authPage" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#003366] via-[#005599] to-[#008855] p-4">
-        <div class="glass p-10 rounded-3xl shadow-2xl w-full max-w-md z-important border border-white/20 relative overflow-hidden">
-            
-            <div class="text-center mb-8">
-                <img src="https://www.rploei.go.th/ec2/wp-content/uploads/2017/08/cropped-cropped-cropped-3.png" alt="โลโก้ รพ.จิตเวชเลยราชนครินทร์" class="mx-auto h-24 object-contain mb-4 drop-shadow-md">
-                <h1 class="text-2xl font-bold text-slate-800">ระบบเอกสารคุณภาพ</h1>
-                <p class="text-slate-500">รพ.จิตเวชเลยราชนครินทร์</p>
+    <div id="authPage" class="h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#003366] via-[#005599] to-[#008855] absolute z-50">
+        <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20">
+            <div class="text-center mb-6">
+                <img src="https://www.rploei.go.th/ec2/wp-content/uploads/2017/08/cropped-cropped-cropped-3.png" alt="Logo" class="mx-auto h-20 mb-2 drop-shadow-md">
+                <h1 class="text-2xl font-bold text-[#003366]">ระบบเอกสารคุณภาพ</h1>
+                <p class="text-slate-500 text-sm">รพ.จิตเวชเลยราชนครินทร์</p>
             </div>
 
-            <div id="loginFormContainer" class="transition-all duration-300">
-                <form id="loginForm" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700">Username</label>
-                        <input type="text" id="loginUsername" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700">Password</label>
-                        <input type="password" id="loginPassword" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
-                    <button type="submit" class="w-full bg-[#003366] text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-800 transition-all active:scale-95">เข้าสู่ระบบ</button>
-                    <div class="text-center mt-4 flex justify-center space-x-2 text-sm">
-                        <button type="button" onclick="toggleAuthForm('register')" class="text-blue-600 hover:underline">สมัครใช้งาน</button>
-                        <span class="text-slate-300">|</span>
-                        <button type="button" onclick="toggleAuthForm('forgot')" class="text-slate-500 hover:underline">ลืมรหัสผ่าน?</button>
-                    </div>
-                </form>
-            </div>
+            <form id="loginForm" class="space-y-4">
+                <input type="text" id="logUser" placeholder="Username" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-[#003366]">
+                <input type="password" id="logPass" placeholder="Password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-[#003366]">
+                <button type="submit" class="w-full bg-[#003366] text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-800 transition-all">เข้าสู่ระบบ</button>
+                <div class="text-center text-sm pt-2">
+                    <button type="button" onclick="toggleAuth('registerForm')" class="text-blue-600 hover:underline">สมัครใช้งาน</button> | 
+                    <button type="button" onclick="toggleAuth('forgotForm')" class="text-slate-500 hover:underline">ลืมรหัสผ่าน?</button>
+                </div>
+            </form>
 
-            <div id="registerFormContainer" class="hidden transition-all duration-300">
-                <h2 class="text-lg font-bold text-center mb-4 text-[#003366]">สมัครสมาชิกใหม่</h2>
-                <form id="registerForm" class="space-y-3">
-                    <input type="text" id="regUsername" placeholder="Username ที่ต้องการ" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none">
-                    <input type="password" id="regPassword" placeholder="Password" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none">
-                    <input type="text" id="regFullName" placeholder="ชื่อ - นามสกุล" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none">
-                    <input type="text" id="regDepartment" placeholder="สังกัด/ฝ่าย" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none">
-                    <input type="email" id="regEmail" placeholder="อีเมล (สำหรับกู้รหัสผ่าน)" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none">
-                    
-                    <div class="flex items-start mt-2">
-                        <input type="checkbox" id="regPdpa" required class="mt-1 mr-2 cursor-pointer">
-                        <label for="regPdpa" class="text-xs text-slate-500">ข้าพเจ้ายินยอมให้ประมวลผลข้อมูลส่วนบุคคล (PDPA) เพื่อใช้ในระบบนี้เท่านั้น</label>
-                    </div>
+            <form id="registerForm" class="space-y-3 hidden">
+                <input type="text" id="regUser" placeholder="Username" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
+                <input type="password" id="regPass" placeholder="Password" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
+                <input type="text" id="regName" placeholder="ชื่อ-นามสกุล" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
+                <input type="text" id="regDept" placeholder="สังกัด/ฝ่าย" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
+                <input type="email" id="regEmail" placeholder="อีเมล" required class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none">
+                <div class="flex items-start text-xs text-slate-500"><input type="checkbox" required class="mt-1 mr-2"> ยินยอม PDPA ข้อมูลส่วนบุคคล</div>
+                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold">สมัครสมาชิก</button>
+                <button type="button" onclick="toggleAuth('loginForm')" class="w-full text-sm text-slate-500 hover:underline">กลับไปเข้าสู่ระบบ</button>
+            </form>
 
-                    <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-green-700 transition-all active:scale-95">ยืนยันการสมัคร</button>
-                    <button type="button" onclick="toggleAuthForm('login')" class="w-full mt-2 text-sm text-slate-500 hover:underline">กลับไปหน้าเข้าสู่ระบบ</button>
-                </form>
-            </div>
-
-            <div id="forgotFormContainer" class="hidden transition-all duration-300">
-                <h2 class="text-lg font-bold text-center mb-2 text-[#003366]">ลืมรหัสผ่าน</h2>
-                <p class="text-xs text-center text-slate-500 mb-4">ระบบจะส่งรหัสผ่านใหม่ไปยังอีเมลของคุณ</p>
-                <form id="forgotForm" class="space-y-4">
-                    <input type="text" id="forgotUsername" placeholder="Username ของคุณ" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none">
-                    <input type="email" id="forgotEmail" placeholder="อีเมลที่ลงทะเบียนไว้" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none">
-                    <button type="submit" class="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-orange-600 transition-all active:scale-95">ส่งรหัสผ่านใหม่</button>
-                    <button type="button" onclick="toggleAuthForm('login')" class="w-full mt-2 text-sm text-slate-500 hover:underline">กลับไปหน้าเข้าสู่ระบบ</button>
-                </form>
-            </div>
-
+            <form id="forgotForm" class="space-y-4 hidden">
+                <input type="text" id="forUser" placeholder="Username" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none">
+                <input type="email" id="forEmail" placeholder="อีเมลที่ลงทะเบียนไว้" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none">
+                <button type="submit" class="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold">ส่งรหัสผ่านใหม่</button>
+                <button type="button" onclick="toggleAuth('loginForm')" class="w-full text-sm text-slate-500 hover:underline">กลับไปเข้าสู่ระบบ</button>
+            </form>
         </div>
     </div>
 
-    <div id="mainApp" class="hidden flex h-screen overflow-hidden">
-        <aside id="sidebar" class="sidebar bg-[#003366] text-white w-64 flex-shrink-0 flex flex-col p-4 shadow-xl">
-            <div class="flex items-center justify-between mb-10">
-                <span class="font-bold text-xl truncate logo-text">JVL DOCUMENT</span>
-                <button onclick="toggleSidebar()" class="p-2 hover:bg-white/10 rounded-lg"><i class="fas fa-bars"></i></button>
+    <div id="mainApp" class="hidden flex h-full">
+        <aside id="sidebar" class="sidebar bg-[#003366] text-white w-64 flex flex-col p-4 shadow-xl z-20">
+            <div class="flex items-center justify-between mb-8 mt-2 px-2">
+                <span class="font-bold text-lg logo-text text-[#FBC02D]">Q-DOC JVL</span>
+                <button onclick="document.getElementById('sidebar').classList.toggle('collapsed')" class="p-2 hover:bg-white/10 rounded-lg"><i class="fas fa-bars"></i></button>
             </div>
             <nav class="flex-1 space-y-2">
-                <a href="#" onclick="showSection('dashboard')" class="flex items-center space-x-3 p-3 rounded-xl bg-white/10 text-gold-400 border-l-4 border-yellow-400">
-                    <i class="fas fa-chart-line w-6"></i> <span>Dashboard</span>
-                </a>
-                <a href="#" onclick="showSection('myDocs')" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all">
-                    <i class="fas fa-file-alt w-6"></i> <span>เอกสารของฉัน</span>
-                </a>
-                <div id="adminMenu" class="hidden pt-4 border-t border-white/10">
-                    <p class="text-xs text-white/40 mb-2 px-3 uppercase">Admin Only</p>
-                    <a href="#" onclick="showSection('allDocs')" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all">
-                        <i class="fas fa-database w-6"></i> <span>เอกสารทั้งหมด</span>
-                    </a>
-                    <a href="#" onclick="showSection('users')" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all">
-                        <i class="fas fa-users w-6"></i> <span>จัดการผู้ใช้</span>
-                    </a>
+                <button onclick="nav('dashboard')" class="w-full flex items-center p-3 rounded-xl hover:bg-white/10 transition-all text-left">
+                    <i class="fas fa-chart-pie w-8 text-center text-[#FBC02D]"></i><span class="menu-text">Dashboard</span>
+                </button>
+                <button onclick="nav('myDocs')" class="w-full flex items-center p-3 rounded-xl hover:bg-white/10 transition-all text-left">
+                    <i class="fas fa-folder-open w-8 text-center text-[#0288D1]"></i><span class="menu-text">เอกสารของฉัน</span>
+                </button>
+                <div id="adminMenu" class="hidden pt-4 border-t border-white/20 mt-4">
+                    <p class="text-xs text-white/50 mb-2 menu-text pl-3">ADMIN TOOLS</p>
+                    <button onclick="nav('allDocs')" class="w-full flex items-center p-3 rounded-xl hover:bg-white/10 transition-all text-left">
+                        <i class="fas fa-database w-8 text-center text-[#F57C00]"></i><span class="menu-text">เอกสารทั้งหมด</span>
+                    </button>
                 </div>
             </nav>
-            <div class="mt-auto p-4 bg-white/5 rounded-2xl">
-                <p id="userDisplay" class="text-sm font-medium truncate">User Name</p>
-                <button onclick="logout()" class="text-xs text-red-300 hover:text-red-100 mt-2 flex items-center">
-                    <i class="fas fa-sign-out-alt mr-2"></i> ออกจากระบบ
-                </button>
+            <div class="mt-auto p-3 bg-white/10 rounded-xl">
+                <div class="text-sm font-medium menu-text truncate" id="userNameDisplay">User</div>
+                <button onclick="location.reload()" class="text-xs text-red-300 hover:text-white mt-1 flex items-center"><i class="fas fa-power-off w-6"></i><span class="menu-text">ออกจากระบบ</span></button>
             </div>
         </aside>
 
-        <main class="flex-1 overflow-y-auto bg-slate-50 p-8">
-            <div id="section-dashboard" class="space-y-6">
-                <h2 class="text-2xl font-bold text-slate-800">แผงควบคุมสถิติ</h2>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="bg-white p-6 rounded-3xl shadow-sm border-b-4 border-blue-500 hover:shadow-md transition-all">
-                        <p class="text-slate-500 text-sm">เอกสารทั้งหมด</p>
-                        <h3 id="statTotal" class="text-3xl font-bold">0</h3>
-                    </div>
-                    </div>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="bg-white p-6 rounded-3xl shadow-sm">
-                        <canvas id="categoryChart"></canvas>
-                    </div>
-                    <div class="bg-white p-6 rounded-3xl shadow-sm">
-                        <h4 class="font-bold mb-4">5 รายการล่าสุด</h4>
-                        <div id="recentDocsList" class="space-y-3"></div>
+        <main class="flex-1 bg-slate-50 p-6 overflow-y-auto relative">
+            
+            <section id="sec-dashboard" class="space-y-6">
+                <h2 class="text-2xl font-bold border-b pb-2 text-[#003366]">ภาพรวมระบบ</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-[#003366]">
+                        <p class="text-slate-500">เอกสารทั้งหมด (ฉบับ)</p>
+                        <h3 class="text-4xl font-bold text-[#003366]" id="stat-total">0</h3>
                     </div>
                 </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-0">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm"><canvas id="catChart"></canvas></div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm">
+                        <h4 class="font-bold mb-4 text-[#003366]">เพิ่มล่าสุด</h4>
+                        <ul id="recentList" class="space-y-3 text-sm"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-myDocs" class="hidden space-y-6">
+                <div class="flex justify-between items-end border-b pb-2">
+                    <h2 class="text-2xl font-bold text-[#003366]">จัดการเอกสาร</h2>
+                    <button onclick="document.getElementById('addDocModal').classList.remove('hidden')" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700"><i class="fas fa-plus mr-2"></i>เพิ่มเอกสาร</button>
+                </div>
+                <div class="bg-white rounded-2xl shadow-sm p-4 overflow-x-auto">
+                    <table class="w-full text-sm text-left whitespace-nowrap">
+                        <thead class="bg-slate-100 text-slate-600">
+                            <tr><th class="p-3">เลขที่</th><th class="p-3">เรื่อง</th><th class="p-3">หมวดหมู่</th><th class="p-3">ไฟล์แนบ</th><th class="p-3">จัดการ</th></tr>
+                        </thead>
+                        <tbody id="docTableBody" class="divide-y"></tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <section id="sec-allDocs" class="hidden space-y-6">
+                 <h2 class="text-2xl font-bold text-[#003366] border-b pb-2">คลังเอกสารทั้งหมด</h2>
+                 <div class="bg-white rounded-2xl shadow-sm p-4 overflow-x-auto">
+                    <table class="w-full text-sm text-left whitespace-nowrap">
+                        <thead class="bg-slate-100 text-slate-600">
+                            <tr><th class="p-3">เลขที่</th><th class="p-3">เรื่อง</th><th class="p-3">เจ้าของ</th><th class="p-3">ไฟล์แนบ</th><th class="p-3">จัดการ</th></tr>
+                        </thead>
+                        <tbody id="allDocTableBody" class="divide-y"></tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div id="addDocModal" class="fixed inset-0 bg-black/50 hidden z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-lg font-bold text-[#003366]">เพิ่มเอกสารใหม่</h3>
+                <button onclick="document.getElementById('addDocModal').classList.add('hidden')" class="text-slate-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
             </div>
-            </main>
+            <form id="uploadForm" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-sm">เลขที่หนังสือ</label><input type="text" id="docNum" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label class="text-sm">วันที่ลงนาม</label><input type="date" id="docDate" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400"></div>
+                </div>
+                <div><label class="text-sm">ชื่อเรื่อง</label><input type="text" id="docSubj" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm">ประเภทเอกสาร</label>
+                        <select id="docCat" required class="w-full p-2 border rounded-lg outline-none">
+                            <option value="QP">Quality Procedure (QP)</option><option value="WI">Work Instruction (WI)</option><option value="FORM">แบบฟอร์ม</option><option value="ORDER">คำสั่งแต่งตั้ง</option>
+                        </select>
+                    </div>
+                    <div><label class="text-sm">ปีงบประมาณ</label><input type="text" id="docYear" required class="w-full p-2 border rounded-lg outline-none" placeholder="เช่น 2569"></div>
+                </div>
+                <div><label class="text-sm">แนบไฟล์ (PDF, Word, Excel, รูปภาพ)</label><input type="file" id="docFiles" multiple required class="w-full p-2 border rounded-lg text-sm bg-slate-50"></div>
+                <button type="submit" class="w-full bg-[#003366] text-white py-3 rounded-xl font-bold mt-4 shadow hover:bg-blue-800">บันทึกข้อมูล</button>
+            </form>
+        </div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwU2oEOBPODfTul2ibdemndeMB8ON15DNB38jcWypBtHmpVva1pVNZq0YHPTCivmE6N2w/exec"; // วาง URL ที่ได้จากขั้นตอน Deploy ที่นี่
-        let currentUser = null;
+        // *** ใส่ URL Web App จาก Google Apps Script ตรงนี้ ***
+        const API_URL = "https://script.google.com/macros/s/AKfycbwU2oEOBPODfTul2ibdemndeMB8ON15DNB38jcWypBtHmpVva1pVNZq0YHPTCivmE6N2w/exec"; 
+        
+        let user = null;
+        let chartInstance = null;
 
-        // ฟังก์ชัน Password Hashing ง่ายๆ (แนะนำให้ใช้ SHA-256 ในระบบจริง)
+        const showLoader = (show) => document.getElementById('loader').style.display = show ? 'flex' : 'none';
+        const toggleAuth = (id) => { ['loginForm', 'registerForm', 'forgotForm'].forEach(f => document.getElementById(f).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); };
+        const nav = (sec) => { ['dashboard', 'myDocs', 'allDocs'].forEach(s => document.getElementById('sec-' + s).classList.add('hidden')); document.getElementById('sec-' + sec).classList.remove('hidden'); if(sec === 'dashboard') loadDash(); if(sec === 'myDocs') loadDocs('myDocs'); if(sec === 'allDocs') loadDocs('allDocs'); };
+
+        // SHA-256 Hashing for Passwords
         async function hashString(str) {
-            const msgUint8 = new TextEncoder().encode(str);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
+        async function apiCall(action, payload) {
+            showLoader(true);
+            try {
+                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, ...payload }) });
+                return await res.json();
+            } catch (e) {
+                Swal.fire('Error', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error'); return { status: 'error' };
+            } finally { showLoader(false); }
+        }
+
+        // --- Auth System ---
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
-            const loader = document.getElementById('loader');
-            loader.classList.remove('hidden');
-            
-            const pass = document.getElementById('password').value;
-            const hashedPass = await hashString(pass); // ส่ง Password ที่ Hash แล้วไปตรวจที่หลังบ้าน
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'login',
-                        username: document.getElementById('username').value,
-                        password: hashedPass
-                    })
-                });
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    currentUser = result.user;
-                    initApp();
-                } else {
-                    Swal.fire('ผิดพลาด', result.message, 'error');
-                }
-            } catch (err) {
-                Swal.fire('ผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
-            } finally {
-                loader.classList.add('hidden');
-            }
+            const pass = await hashString(document.getElementById('logPass').value);
+            const res = await apiCall('login', { username: document.getElementById('logUser').value, password: pass });
+            if (res.status === 'success') {
+                user = res.user;
+                document.getElementById('authPage').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                document.getElementById('userNameDisplay').innerText = `${user.fullName} (${user.department})`;
+                if (user.role === 'Admin') document.getElementById('adminMenu').classList.remove('hidden');
+                nav('dashboard');
+            } else Swal.fire('ผิดพลาด', res.message, 'error');
         };
 
-        function initApp() {
-            document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-            document.getElementById('userDisplay').innerText = currentUser.fullName;
-            if (currentUser.role === 'Admin') document.getElementById('adminMenu').classList.remove('hidden');
-            loadDashboard();
-        }
+        document.getElementById('registerForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const pass = await hashString(document.getElementById('regPass').value);
+            const res = await apiCall('register', { username: document.getElementById('regUser').value, password: pass, fullName: document.getElementById('regName').value, department: document.getElementById('regDept').value, email: document.getElementById('regEmail').value, pdpaConsent: new Date().toISOString() });
+            if (res.status === 'success') { Swal.fire('สำเร็จ', 'สมัครสมาชิกเรียบร้อย', 'success'); toggleAuth('loginForm'); document.getElementById('registerForm').reset(); }
+            else Swal.fire('ผิดพลาด', res.message, 'error');
+        };
 
-        function toggleSidebar() {
-            const sb = document.getElementById('sidebar');
-            sb.classList.toggle('collapsed');
-            const logoText = sb.querySelector('.logo-text');
-            logoText.classList.toggle('hidden');
-        }
-
-        async function loadDashboard() {
-            // ดึงข้อมูลผ่าน fetch(API_URL, { action: 'getDashboard' })
-            // แล้วนำมาวาดกราฟด้วย Chart.js และอัพเดทตารางรายการล่าสุด
-        }
-
-        // เพิ่มฟังก์ชันจัดการไฟล์และการบันทึกเอกสารที่นี่
-
-// เพิ่ม/แก้ไข Script ส่วนนี้ครับ
-    function toggleAuthForm(formType) {
-        document.getElementById('loginFormContainer').classList.add('hidden');
-        document.getElementById('registerFormContainer').classList.add('hidden');
-        document.getElementById('forgotFormContainer').classList.add('hidden');
-        
-        if(formType === 'login') document.getElementById('loginFormContainer').classList.remove('hidden');
-        if(formType === 'register') document.getElementById('registerFormContainer').classList.remove('hidden');
-        if(formType === 'forgot') document.getElementById('forgotFormContainer').classList.remove('hidden');
-    }
-
-    // ฟังก์ชันจัดการสมัครสมาชิก
-    document.getElementById('registerForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const loader = document.getElementById('loader');
-        loader.classList.remove('hidden');
-        
-        const pass = document.getElementById('regPassword').value;
-        const hashedPass = await hashString(pass); // Hash รหัสผ่านก่อนส่ง
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'register',
-                    username: document.getElementById('regUsername').value,
-                    password: hashedPass,
-                    fullName: document.getElementById('regFullName').value,
-                    department: document.getElementById('regDepartment').value,
-                    email: document.getElementById('regEmail').value,
-                    pdpaConsent: new Date().toISOString()
-                })
-            });
-            const result = await response.json();
+        // --- Dashboard ---
+        async function loadDash() {
+            const res = await apiCall('getDashboard', {});
+            if (res.status !== 'success') return;
             
-            if (result.status === 'success') {
-                Swal.fire('สำเร็จ', 'สมัครสมาชิกเรียบร้อยแล้ว กรุณาเข้าสู่ระบบ', 'success');
-                toggleAuthForm('login');
-                document.getElementById('registerForm').reset();
-            } else {
-                Swal.fire('ผิดพลาด', result.message, 'error');
-            }
-        } catch (err) {
-            Swal.fire('ผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
-        } finally {
-            loader.classList.add('hidden');
-        }
-    };
-
-    // ฟังก์ชันจัดการลืมรหัสผ่าน
-    document.getElementById('forgotForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const loader = document.getElementById('loader');
-        loader.classList.remove('hidden');
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'forgotPassword',
-                    username: document.getElementById('forgotUsername').value,
-                    email: document.getElementById('forgotEmail').value
-                })
-            });
-            const result = await response.json();
+            document.getElementById('stat-total').innerText = res.stats.total;
             
-            if (result.status === 'success') {
-                Swal.fire('ส่งสำเร็จ', 'ระบบได้ส่งรหัสผ่านใหม่ไปยังอีเมลของคุณแล้ว', 'success');
-                toggleAuthForm('login');
-                document.getElementById('forgotForm').reset();
-            } else {
-                Swal.fire('ผิดพลาด', result.message, 'error');
-            }
-        } catch (err) {
-            Swal.fire('ผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
-        } finally {
-            loader.classList.add('hidden');
-        }
-    };
+            // Recent List
+            const ul = document.getElementById('recentList');
+            ul.innerHTML = res.stats.recent.map(r => `<li class="border-b pb-2"><div class="font-medium text-[#003366]">${r.subject}</div><div class="text-xs text-slate-400"><i class="far fa-clock"></i> ${new Date(r.date).toLocaleDateString('th-TH')}</div></li>`).join('');
 
-    // (แก้ไข ID ในส่วน Login เดิมให้ตรงกับ HTML ด้านบน)
-    document.getElementById('loginForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const loader = document.getElementById('loader');
-        loader.classList.remove('hidden');
-        
-        const pass = document.getElementById('loginPassword').value; // เปลี่ยน ID
-        const hashedPass = await hashString(pass); 
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'login',
-                    username: document.getElementById('loginUsername').value, // เปลี่ยน ID
-                    password: hashedPass
-                })
+            // Chart
+            const ctx = document.getElementById('catChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: Object.keys(res.stats.categories), datasets: [{ label: 'จำนวนเอกสารแยกตามหมวดหมู่', data: Object.values(res.stats.categories), backgroundColor: ['#003366', '#4A2C6D', '#D32F2F', '#F57C00', '#FBC02D'] }] },
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
             });
-            const result = await response.json();
-            
-            if (result.status === 'success') {
-                currentUser = result.user;
-                initApp();
-            } else {
-                Swal.fire('ผิดพลาด', result.message, 'error');
-            }
-        } catch (err) {
-            Swal.fire('ผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
-        } finally {
-            loader.classList.add('hidden');
         }
-    };
-        
+
+        // --- Upload Document ---
+        document.getElementById('uploadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const filesInput = document.getElementById('docFiles').files;
+            let filesData = [];
+
+            // อ่านไฟล์เป็น Base64
+            for(let i=0; i<filesInput.length; i++) {
+                const file = filesInput[i];
+                const base64 = await new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.readAsDataURL(file);
+                });
+                filesData.push({ name: file.name, mimeType: file.type, base64: base64 });
+            }
+
+            const payload = {
+                docNumber: document.getElementById('docNum').value,
+                docDate: document.getElementById('docDate').value,
+                subject: document.getElementById('docSubj').value,
+                category: document.getElementById('docCat').value,
+                fiscalYear: document.getElementById('docYear').value,
+                department: user.department,
+                owner: user.username,
+                files: filesData
+            };
+
+            const res = await apiCall('saveDoc', payload);
+            if (res.status === 'success') {
+                Swal.fire('สำเร็จ', 'บันทึกเอกสารเรียบร้อย', 'success');
+                document.getElementById('uploadForm').reset();
+                document.getElementById('addDocModal').classList.add('hidden');
+                nav('myDocs');
+            } else Swal.fire('ผิดพลาด', res.message, 'error');
+        };
+
+        // --- Load Data Table ---
+        async function loadDocs(type) {
+            const res = await apiCall('getDocs', { role: type === 'allDocs' ? 'Admin' : 'Staff', username: user.username });
+            if(res.status !== 'success') return;
+
+            const tbody = document.getElementById(type === 'allDocs' ? 'allDocTableBody' : 'docTableBody');
+            tbody.innerHTML = res.docs.map(d => {
+                const files = JSON.parse(d[7] || '[]');
+                const links = files.map((f, i) => `<a href="${f}" target="_blank" class="text-blue-500 hover:underline mr-2"><i class="fas fa-file-download"></i> ไฟล์ ${i+1}</a>`).join('');
+                const delBtn = `<button onclick="delDoc('${d[0]}', '${type}')" class="text-red-500 hover:text-red-700 p-1"><i class="fas fa-trash-alt"></i></button>`;
+                
+                return `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-3 font-mono text-xs">${d[1]}</td>
+                    <td class="p-3 font-medium text-slate-800">${d[3]}<br><span class="text-xs text-slate-400">ปีงบ: ${d[8]}</span></td>
+                    <td class="p-3"><span class="px-2 py-1 bg-slate-200 rounded-full text-xs">${type === 'allDocs' ? d[6] : d[4]}</span></td>
+                    <td class="p-3">${links || '-'}</td>
+                    <td class="p-3">${delBtn}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        async function delDoc(id, type) {
+            const confirm = await Swal.fire({ title: 'ยืนยันการลบ?', text: "ข้อมูลจะถูกลบออกจากระบบอย่างถาวร", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'ใช่, ลบเลย!' });
+            if(confirm.isConfirmed) {
+                const res = await apiCall('deleteDoc', { id });
+                if(res.status === 'success') { Swal.fire('ลบแล้ว!', 'เอกสารถูกลบเรียบร้อย', 'success'); loadDocs(type); }
+            }
+        }
     </script>
 </body>
 </html>
