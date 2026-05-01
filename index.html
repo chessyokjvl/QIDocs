@@ -623,8 +623,8 @@
             document.getElementById('docId').value = '';
             document.getElementById('isNewVersion').value = 'false'; 
             document.getElementById('modalTitle').innerText = 'เพิ่มเอกสารใหม่';
-            document.getElementById('docFiles').required = true; 
-            document.getElementById('fileHelpText').innerText = '* กรุณาแนบไฟล์เอกสาร';
+            document.getElementById('docFiles').required = false;  // เปลี่ยน true เป็น false
+            document.getElementById('fileHelpText').innerText = '* สามารถแนบไฟล์จากเครื่อง หรือใส่แค่ลิงก์เอกสาร (URL) ก็ได้';
             document.getElementById('docDept').value = user.department; 
             updateSubCats();
 
@@ -653,8 +653,8 @@
             document.getElementById('docId').value = docId;
             document.getElementById('isNewVersion').value = 'true'; 
             document.getElementById('modalTitle').innerHTML = '<i class="fas fa-level-up-alt"></i> อัปเดตเอกสารฉบับใหม่ (Revision)';
-            document.getElementById('docFiles').required = true; 
-            document.getElementById('fileHelpText').innerHTML = '<span class="text-red-500">* กรุณาแนบไฟล์เวอร์ชันใหม่ (ไฟล์เดิมจะถูกย้ายไปเก็บในประวัติ)</span>';
+            document.getElementById('docFiles').required = false;  // เปลี่ยน true เป็น false
+            document.getElementById('fileHelpText').innerHTML = '<span class="text-red-500">* สามารถแนบไฟล์เวอร์ชันใหม่ หรือใส่แค่ลิงก์ (ไฟล์เดิมจะถูกย้ายไปเก็บประวัติ)</span>';
 
             const doc = allDocsData.find(d => d[0].toString() === docId.toString());
             if(doc) {
