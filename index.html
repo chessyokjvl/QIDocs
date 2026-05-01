@@ -153,7 +153,9 @@
             
             <form id="uploadForm" class="space-y-4">
                 <input type="hidden" id="docId">
-                <input type="hidden" id="isNewVersion" value="false"> <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="hidden" id="isNewVersion" value="false"> 
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div><label class="text-sm font-medium text-blue-800">เลขที่หนังสือ (ฉบับใหม่/ปัจจุบัน)</label><input type="text" id="docNum" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400"></div>
                     <div><label class="text-sm font-medium text-blue-800">ลงวันที่</label><input type="date" id="docDate" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400"></div>
                 </div>
@@ -245,6 +247,42 @@
             } finally { showLoader(false); }
         }
 
+        // --- เพิ่ม/กู้คืน ส่วน Register และ Forgot Password ---
+        document.getElementById('registerForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const pass = await hashString(document.getElementById('regPass').value);
+            const res = await apiCall('register', { 
+                username: document.getElementById('regUser').value, 
+                password: pass, 
+                fullName: document.getElementById('regName').value, 
+                department: document.getElementById('regDept').value, 
+                email: document.getElementById('regEmail').value, 
+                pdpaConsent: new Date().toISOString() 
+            });
+            if (res.status === 'success') { 
+                Swal.fire('สำเร็จ', 'สมัครสมาชิกเรียบร้อยแล้ว', 'success'); 
+                toggleAuth('loginForm'); 
+                document.getElementById('registerForm').reset(); 
+            } else {
+                Swal.fire('ผิดพลาด', res.message, 'error');
+            }
+        };
+
+        document.getElementById('forgotForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const res = await apiCall('forgotPassword', {
+                username: document.getElementById('forUser').value,
+                email: document.getElementById('forEmail').value
+            });
+            if (res.status === 'success') {
+                Swal.fire('สำเร็จ', res.message, 'success');
+                toggleAuth('loginForm');
+                document.getElementById('forgotForm').reset();
+            } else {
+                Swal.fire('ผิดพลาด', res.message, 'error');
+            }
+        };
+
         // --- Dashboard Grid ---
         async function loadDash() {
             const res = await apiCall('getDashboard', {});
@@ -308,11 +346,9 @@
         }
 
         function buildTableRow(d, type) {
-            // 1. จัดการลิงก์ไฟล์ล่าสุด
             const files = JSON.parse(d[7] || '[]');
             const links = files.map((f, i) => `<a href="${f}" target="_blank" class="inline-block bg-[#0288D1] text-white px-2 py-1 rounded shadow hover:bg-blue-600 transition-colors text-xs mr-2 mb-1"><i class="fas fa-file-alt"></i> ล่าสุด ${i+1}</a>`).join('');
             
-            // 2. จัดการประวัติ (Version History)
             let versions = [];
             try { versions = JSON.parse(d[11] || '[]'); } catch(e){}
             let oldLinksHtml = '';
@@ -328,7 +364,6 @@
                 }
             }
 
-            // 3. จัดการปุ่ม Action (แยกระหว่าง Guest / Staff / Admin)
             let actionBtns = '';
             if (user.role !== 'Guest') {
                 actionBtns = `
@@ -406,6 +441,7 @@
             }
         }
 
+        // --- ล็อกอิน ---
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
             const pass = await hashString(document.getElementById('logPass').value);
@@ -428,11 +464,10 @@
             } else Swal.fire('ผิดพลาด', res.message, 'error');
         };
 
-        // --- เปิด Modal แบบ ปกติ หรือ แก้ไข ---
         function openDocModal(docId = null) {
             document.getElementById('uploadForm').reset();
             document.getElementById('docId').value = '';
-            document.getElementById('isNewVersion').value = 'false'; // ไม่ใช่การอัปเดตเวอร์ชัน
+            document.getElementById('isNewVersion').value = 'false'; 
             document.getElementById('modalTitle').innerText = 'เพิ่มเอกสารใหม่';
             document.getElementById('docFiles').required = true; 
             document.getElementById('fileHelpText').innerText = '* กรุณาแนบไฟล์เอกสาร';
@@ -459,23 +494,21 @@
             document.getElementById('addDocModal').classList.remove('hidden');
         }
 
-        // --- เปิด Modal สำหรับอัปเดตเวอร์ชัน (Revision) ---
         function openVersionModal(docId) {
             document.getElementById('uploadForm').reset();
             document.getElementById('docId').value = docId;
-            document.getElementById('isNewVersion').value = 'true'; // <--- จุดเปลี่ยนสำคัญ!
+            document.getElementById('isNewVersion').value = 'true'; 
             document.getElementById('modalTitle').innerHTML = '<i class="fas fa-level-up-alt"></i> อัปเดตเอกสารฉบับใหม่ (Revision)';
-            document.getElementById('docFiles').required = true; // บังคับให้ต้องมีไฟล์ใหม่เสมอสำหรับเวอร์ชันใหม่
+            document.getElementById('docFiles').required = true; 
             document.getElementById('fileHelpText').innerHTML = '<span class="text-red-500">* กรุณาแนบไฟล์เวอร์ชันใหม่ (ไฟล์เดิมจะถูกย้ายไปเก็บในประวัติ)</span>';
 
             const doc = allDocsData.find(d => d[0].toString() === docId.toString());
             if(doc) {
-                // คงข้อมูลบริบทเดิมไว้ (ผู้ใช้แก้ได้) แต่เลขที่และปี ให้รอกรอกใหม่
                 document.getElementById('docSubj').value = doc[3];
                 document.getElementById('docCat').value = doc[4];
                 updateSubCats(doc[10]); 
                 document.getElementById('docDept').value = doc[5];
-                initFiscalYear(); // เซ็ตปีงบเป็นปีปัจจุบัน
+                initFiscalYear(); 
             }
             document.getElementById('addDocModal').classList.remove('hidden');
         }
@@ -496,7 +529,6 @@
             const docId = document.getElementById('docId').value;
             let existingFiles = [];
             
-            // ถ้าเป็นการแก้ไขธรรมดา ให้ดึงไฟล์เดิมส่งไปด้วย แต่ถ้าทำ New Version ให้ส่ง array ว่างไป เพื่อให้เซฟเฉพาะไฟล์ใหม่
             if(docId && !isNewVersion) {
                 const doc = allDocsData.find(d => d[0].toString() === docId);
                 if(doc) existingFiles = JSON.parse(doc[7] || '[]'); 
@@ -504,7 +536,7 @@
 
             const payload = {
                 id: docId, 
-                isNewVersion: isNewVersion, // ส่ง Flag ไปให้ Backend ทำงาน
+                isNewVersion: isNewVersion,
                 docNumber: document.getElementById('docNum').value, 
                 docDate: document.getElementById('docDate').value,
                 subject: document.getElementById('docSubj').value, 
@@ -532,11 +564,31 @@
             }
         }
         
-        // ฟังก์ชันจัดการหมวดหมู่ (ดึงจากของเดิม) ...
         async function manageCategories() {
-            // (ฟังก์ชันจัดการหมวดหมู่ใช้งานได้ตามปกติ)
             const { value: choice } = await Swal.fire({ title: 'จัดการหมวดหมู่', input: 'radio', inputOptions: { 'main': 'เพิ่มหมวดหมู่หลัก', 'sub': 'เพิ่มหมวดหมู่ย่อย' }});
-            // ... Logic ของเดิม ...
+            
+            if (choice === 'main') {
+                const { value: catName } = await Swal.fire({ title: 'ชื่อหมวดหมู่หลัก', input: 'text', showCancelButton: true });
+                if (catName) {
+                    const res = await apiCall('addCategory', { catName });
+                    if(res.status === 'success') { Swal.fire('สำเร็จ', '', 'success'); loadCategories(); }
+                }
+            } else if (choice === 'sub') {
+                const catOptions = {};
+                Array.from(document.getElementById('docCat').options).forEach(opt => { if(opt.value) catOptions[opt.value] = opt.text; });
+                const { value: formValues } = await Swal.fire({
+                    title: 'เพิ่มหมวดหมู่ย่อย',
+                    html: `
+                        <select id="swal-main" class="w-full p-2 border rounded mb-3"><option value="">-- เลือกหมวดหมู่หลัก --</option>
+                        ${Object.keys(catOptions).map(k => `<option value="${k}">${catOptions[k]}</option>`).join('')}</select>
+                        <input id="swal-sub" class="w-full p-2 border rounded" placeholder="ชื่อหมวดหมู่ย่อย">`,
+                    focusConfirm: false, showCancelButton: true, preConfirm: () => [document.getElementById('swal-main').value, document.getElementById('swal-sub').value]
+                });
+                if (formValues && formValues[0] && formValues[1]) {
+                    const res = await apiCall('addSubCategory', { mainCat: formValues[0], subCatName: formValues[1] });
+                    if(res.status === 'success') { Swal.fire('สำเร็จ', '', 'success'); loadCategories(); }
+                }
+            }
         }
     </script>
 </body>
