@@ -26,8 +26,8 @@
         <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-[#003366]"></div>
     </div>
 
-    <div id="authPage" class="h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#003366] via-[#005599] to-[#008855] absolute z-50">
-        <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 relative">
+    <div id="authPage" class="h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#003366] via-[#005599] to-[#008855] absolute z-50 overflow-y-auto py-10">
+        <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 relative my-auto">
             <div class="text-center mb-6">
                 <img src="https://www.rploei.go.th/ec2/wp-content/uploads/2017/08/cropped-cropped-cropped-3.png" alt="Logo" class="mx-auto h-20 mb-2 drop-shadow-md">
                 <h1 class="text-2xl font-bold text-[#003366]">ระบบเอกสารคุณภาพ</h1>
@@ -39,7 +39,7 @@
                 <input type="password" id="logPass" placeholder="Password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-[#003366]">
                 <button type="submit" class="w-full bg-[#003366] text-white py-3 rounded-xl font-semibold shadow hover:bg-blue-800 transition-all">เข้าสู่ระบบ</button>
                 
-                <button type="button" onclick="loginGuest()" class="w-full bg-slate-200 text-slate-700 py-3 rounded-xl font-semibold shadow hover:bg-slate-300 transition-all border border-slate-300">
+                <button type="button" onclick="loginGuest()" class="w-full bg-slate-200 text-slate-700 py-3 rounded-xl font-semibold shadow hover:bg-slate-300 transition-all border border-slate-300 mt-2">
                     <i class="fas fa-user-circle mr-2"></i>เข้าชมแบบบุคคลทั่วไป (Guest)
                 </button>
 
@@ -79,7 +79,7 @@
                 <button onclick="document.getElementById('sidebar').classList.toggle('collapsed')" class="p-2 hover:bg-white/10 rounded-lg"><i class="fas fa-bars"></i></button>
             </div>
             <nav class="flex-1 space-y-2">
-                <button onclick="nav('dashboard')" class="w-full flex items-center p-3 rounded-xl hover:bg-white/10 transition-all text-left"><i class="fas fa-chart-pie w-8 text-center text-[#FBC02D]"></i><span class="menu-text">Dashboard</span></button>
+                <button onclick="nav('dashboard')" class="w-full flex items-center p-3 rounded-xl hover:bg-white/10 transition-all text-left"><i class="fas fa-chart-pie w-8 text-center text-[#FBC02D]"></i><span class="menu-text">หน้าแรก (Dashboard)</span></button>
                 <button id="menu-myDocs" onclick="nav('myDocs')" class="w-full flex items-center p-3 rounded-xl hover:bg-white/10 transition-all text-left"><i class="fas fa-folder-open w-8 text-center text-[#0288D1]"></i><span class="menu-text">เอกสารของฉัน</span></button>
                 <button id="menu-allDocs" onclick="nav('allDocs')" class="w-full flex items-center p-3 rounded-xl hover:bg-white/10 transition-all text-left hidden"><i class="fas fa-database w-8 text-center text-[#F57C00]"></i><span class="menu-text">คลังเอกสารทั้งหมด</span></button>
 
@@ -95,12 +95,64 @@
         </aside>
 
         <main class="flex-1 bg-slate-50 p-6 overflow-y-auto w-full">
+            
             <section id="sec-dashboard" class="space-y-6">
                 <h2 class="text-2xl font-bold border-b pb-2 text-[#003366]">ภาพรวมคลังเอกสาร</h2>
+                
+                <div class="flex flex-col md:flex-row gap-4 bg-white p-4 rounded-xl shadow-sm items-end mb-4">
+                     <div class="flex flex-col w-full md:w-auto">
+                         <label class="text-xs text-slate-500 mb-1">ตั้งแต่ (วันที่)</label>
+                         <input type="date" id="dashStartDate" onchange="renderDashboard()" class="p-2 border rounded-lg outline-none focus:ring-2 focus:ring-[#0288D1]">
+                     </div>
+                     <div class="flex flex-col w-full md:w-auto">
+                         <label class="text-xs text-slate-500 mb-1">ถึง (วันที่)</label>
+                         <input type="date" id="dashEndDate" onchange="renderDashboard()" class="p-2 border rounded-lg outline-none focus:ring-2 focus:ring-[#0288D1]">
+                     </div>
+                     <div class="flex flex-col w-full md:w-auto">
+                         <label class="text-xs text-slate-500 mb-1">หมวดหมู่</label>
+                         <select id="dashCatFilter" onchange="renderDashboard()" class="p-2 border rounded-lg outline-none focus:ring-2 focus:ring-[#0288D1]">
+                             <option value="">-- ทุกหมวดหมู่ --</option>
+                         </select>
+                     </div>
+                     <div class="flex flex-col w-full">
+                         <label class="text-xs text-slate-500 mb-1">ค้นหาด่วน</label>
+                         <div class="relative w-full">
+                             <input type="text" id="dashSearch" onkeyup="renderDashboard()" placeholder="พิมพ์ชื่อเรื่อง, หน่วยงาน, เลขที่..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-[#0288D1]">
+                             <i class="fas fa-search absolute left-3 top-[10px] text-slate-400"></i>
+                         </div>
+                     </div>
+                     <div class="flex flex-col w-full md:w-auto">
+                        <button onclick="clearDashFilters()" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-300 transition-colors text-sm whitespace-nowrap h-[42px]"><i class="fas fa-eraser"></i> ล้างข้อมูล</button>
+                     </div>
+                 </div>
+
                 <div id="dashboardGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm"><canvas id="catChart"></canvas></div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm"><h4 class="font-bold mb-4 text-[#003366]">เพิ่มล่าสุด</h4><ul id="recentList" class="space-y-3 text-sm"></ul></div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm relative">
+                        <h4 class="font-bold mb-4 text-[#003366]">สัดส่วนประเภทเอกสาร <span class="text-xs text-slate-400 font-normal">(คลิกที่แท่งเพื่อกรองข้อมูล)</span></h4>
+                        <canvas id="catChart"></canvas>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm">
+                        <h4 class="font-bold mb-4 text-[#003366]">เพิ่มล่าสุด 5 รายการ</h4>
+                        <ul id="recentList" class="space-y-3 text-sm"></ul>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm p-4 overflow-x-auto mt-6">
+                    <h4 class="font-bold mb-4 text-[#003366]" id="dashTableTitle">รายการเอกสารทั้งหมด</h4>
+                    <table class="w-full text-sm text-left whitespace-nowrap">
+                        <thead class="bg-slate-100 text-slate-600">
+                            <tr>
+                                <th class="p-3 sortable" onclick="sortTable(1)">เลขที่ <i class="fas fa-sort text-slate-300"></i></th>
+                                <th class="p-3 sortable" onclick="sortTable(3)">เรื่อง <i class="fas fa-sort text-slate-300"></i></th>
+                                <th class="p-3 sortable" onclick="sortTable(4)">หมวดหมู่ <i class="fas fa-sort text-slate-300"></i></th>
+                                <th class="p-3 sortable" onclick="sortTable(5)">หน่วยงาน <i class="fas fa-sort text-slate-300"></i></th>
+                                <th class="p-3">เปิดไฟล์ / จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashDocTableBody" class="divide-y"></tbody>
+                    </table>
                 </div>
             </section>
 
@@ -122,7 +174,7 @@
                      </select>
                      <div class="relative w-full">
                          <input type="text" id="uniSearch" onkeyup="renderAllDocsTable()" placeholder="ค้นหา ชื่อเรื่อง, หน่วยงาน, เลขที่..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-[#0288D1]">
-                         <i class="fas fa-search absolute left-3 top-3 text-slate-400"></i>
+                         <i class="fas fa-search absolute left-3 top-[10px] text-slate-400"></i>
                      </div>
                      <button id="btnAddAdmin" onclick="openDocModal()" class="hidden whitespace-nowrap bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700"><i class="fas fa-plus mr-2"></i>เพิ่มเอกสารใหม่</button>
                  </div>
@@ -134,7 +186,7 @@
                                 <th class="p-3 sortable" onclick="sortTable(3)">เรื่อง <i class="fas fa-sort text-slate-300"></i></th>
                                 <th class="p-3 sortable" onclick="sortTable(4)">หมวดหมู่ <i class="fas fa-sort text-slate-300"></i></th>
                                 <th class="p-3 sortable" onclick="sortTable(5)">หน่วยงาน <i class="fas fa-sort text-slate-300"></i></th>
-                                <th id="colManage" class="p-3">จัดการ</th>
+                                <th class="p-3">เปิดไฟล์ / จัดการ</th>
                             </tr>
                         </thead>
                         <tbody id="allDocTableBody" class="divide-y"></tbody>
@@ -208,27 +260,59 @@
             if(id) document.getElementById(id).classList.remove('hidden'); 
         };
 
+        // --- ระบบล็อกอิน ---
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const pass = await hashString(document.getElementById('logPass').value);
+            const res = await apiCall('login', { username: document.getElementById('logUser').value, password: pass });
+            if (res.status === 'success') {
+                user = res.user;
+                initApp();
+            } else Swal.fire('ผิดพลาด', res.message, 'error');
+        };
+
         function loginGuest() {
             user = { username: 'guest', fullName: 'บุคคลทั่วไป (Guest)', department: '-', role: 'Guest' };
+            initApp();
+        }
+
+        async function initApp() {
             document.getElementById('authPage').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('hidden');
-            document.getElementById('userNameDisplay').innerText = user.fullName;
-            document.getElementById('menu-myDocs').classList.add('hidden'); 
-            document.getElementById('menu-allDocs').classList.remove('hidden'); 
-            initFiscalYear(); loadCategories(); nav('dashboard');
+            document.getElementById('userNameDisplay').innerText = `${user.fullName}`;
+            
+            if (user.role === 'Admin') {
+                document.getElementById('adminMenu').classList.remove('hidden');
+                document.getElementById('btnManageCat').classList.remove('hidden'); 
+                document.getElementById('menu-allDocs').classList.remove('hidden');
+                document.getElementById('docDept').value = user.department; 
+            } else if (user.role === 'Staff') {
+                document.getElementById('menu-myDocs').classList.remove('hidden');
+                document.getElementById('docDept').value = user.department; 
+            } else { // Guest
+                document.getElementById('menu-myDocs').classList.add('hidden'); 
+                document.getElementById('menu-allDocs').classList.add('hidden'); // Guest ดูจาก Dashboard พอ
+            }
+            
+            initFiscalYear(); 
+            await loadCategories(); 
+            await fetchAllDocs(); // ดึงข้อมูลครั้งเดียวจบ!
+            nav('dashboard');
         }
-        
+
         const nav = (sec) => { 
             ['dashboard', 'myDocs', 'allDocs'].forEach(s => document.getElementById('sec-' + s).classList.add('hidden')); 
             document.getElementById('sec-' + sec).classList.remove('hidden'); 
+            
             if(sec === 'dashboard') {
-                loadDash(); 
+                renderDashboard(); 
             } else if (sec === 'allDocs') {
                 document.getElementById('uniSearch').value = ''; 
+                document.getElementById('tableCatFilter').value = '';
                 if(user.role === 'Admin') document.getElementById('btnAddAdmin').classList.remove('hidden');
-                loadDocs('allDocs');
+                renderAllDocsTable();
             } else if (sec === 'myDocs') {
-                loadDocs('myDocs');
+                renderMyDocsTable();
             }
         };
 
@@ -247,136 +331,171 @@
             } finally { showLoader(false); }
         }
 
-        // --- เพิ่ม/กู้คืน ส่วน Register และ Forgot Password ---
-        document.getElementById('registerForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const pass = await hashString(document.getElementById('regPass').value);
-            const res = await apiCall('register', { 
-                username: document.getElementById('regUser').value, 
-                password: pass, 
-                fullName: document.getElementById('regName').value, 
-                department: document.getElementById('regDept').value, 
-                email: document.getElementById('regEmail').value, 
-                pdpaConsent: new Date().toISOString() 
-            });
-            if (res.status === 'success') { 
-                Swal.fire('สำเร็จ', 'สมัครสมาชิกเรียบร้อยแล้ว', 'success'); 
-                toggleAuth('loginForm'); 
-                document.getElementById('registerForm').reset(); 
-            } else {
-                Swal.fire('ผิดพลาด', res.message, 'error');
+        // --- Fetch & Data Engine (Client-side) ---
+        async function fetchAllDocs() {
+            // ดึงข้อมูลทั้งหมดมาไว้ที่หน้าบ้านครั้งเดียว (เร็วและทรงพลังมาก)
+            const res = await apiCall('getDocs', { role: user.role, username: user.username, viewType: 'allDocs' });
+            if(res.status === 'success') {
+                allDocsData = res.docs;
             }
-        };
+        }
 
-        document.getElementById('forgotForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const res = await apiCall('forgotPassword', {
-                username: document.getElementById('forUser').value,
-                email: document.getElementById('forEmail').value
-            });
-            if (res.status === 'success') {
-                Swal.fire('สำเร็จ', res.message, 'success');
-                toggleAuth('loginForm');
-                document.getElementById('forgotForm').reset();
-            } else {
-                Swal.fire('ผิดพลาด', res.message, 'error');
-            }
-        };
+        async function refreshData() {
+            await fetchAllDocs();
+            if(!document.getElementById('sec-dashboard').classList.contains('hidden')) renderDashboard();
+            if(!document.getElementById('sec-myDocs').classList.contains('hidden')) renderMyDocsTable();
+            if(!document.getElementById('sec-allDocs').classList.contains('hidden')) renderAllDocsTable();
+        }
 
         // --- Logic: เลือก Icon ตามชื่อหมวดหมู่ ---
         function getCategoryIcon(catName) {
             const name = (catName || '').toLowerCase();
+            if(name.includes('ประกาศ')) return 'fas fa-bullhorn';
+            if(name.includes('คำสั่ง')) return 'fas fa-stamp'; // รูปตราประทับ
             if(name.includes('qp') || name.includes('procedure') || name.includes('ระเบียบ')) return 'fas fa-book';
             if(name.includes('wi') || name.includes('instruction') || name.includes('วิธีปฏิบัติ')) return 'fas fa-clipboard-list';
             if(name.includes('form') || name.includes('แบบฟอร์ม')) return 'fas fa-file-signature';
-            if(name.includes('order') || name.includes('คำสั่ง')) return 'fas fa-bullhorn';
             if(name.includes('นโยบาย') || name.includes('policy')) return 'fas fa-landmark';
             if(name.includes('คู่มือ') || name.includes('manual')) return 'fas fa-book-medical';
             if(name.includes('รายงาน') || name.includes('report')) return 'fas fa-chart-line';
             if(name.includes('ความเสี่ยง') || name.includes('risk')) return 'fas fa-exclamation-triangle';
-            return 'fas fa-folder'; // ค่าเริ่มต้น
+            return 'fas fa-folder'; 
         }
 
-        // --- Dashboard Grid (แบบมี Icon & Watermark) ---
-        async function loadDash() {
-            const res = await apiCall('getDashboard', {});
-            if (res.status === 'success') {
-                const grid = document.getElementById('dashboardGrid');
+        // --- Super Dashboard Engine ---
+        function renderDashboard() {
+            const startDate = document.getElementById('dashStartDate').value;
+            const endDate = document.getElementById('dashEndDate').value;
+            const catFilter = document.getElementById('dashCatFilter').value;
+            const term = document.getElementById('dashSearch').value.toLowerCase();
+
+            // 1. Filter ข้อมูลจาก Data หลัก
+            let filteredDocs = allDocsData.filter(d => {
+                const text = d.join(' ').toLowerCase();
+                let matchCat = (catFilter === "" || d[4] === catFilter);
+                let matchSearch = text.includes(term);
                 
-                // 1. การ์ดรวมเอกสารทั้งหมด (Total)
-                let gridHtml = `
-                <div onclick="filterFromDashboard('')" class="relative bg-gradient-to-br from-[#003366] to-[#0288D1] text-white p-6 rounded-2xl shadow-md hover:scale-105 transition-all cursor-pointer overflow-hidden group">
+                let matchDate = true;
+                if (startDate || endDate) {
+                    const docDate = new Date(d[2]); // วันที่ลงนาม
+                    if (startDate) matchDate = matchDate && (docDate >= new Date(startDate));
+                    if (endDate) matchDate = matchDate && (docDate <= new Date(endDate));
+                }
+                return matchDate && matchCat && matchSearch;
+            });
+
+            // 2. คำนวณ Stats
+            let total = filteredDocs.length;
+            let categories = {};
+            filteredDocs.forEach(d => {
+                categories[d[4]] = (categories[d[4]] || 0) + 1;
+            });
+
+            // 3. วาด Grid
+            const grid = document.getElementById('dashboardGrid');
+            let gridHtml = `
+            <div onclick="setDashFilter('')" class="relative bg-gradient-to-br from-[#003366] to-[#0288D1] text-white p-6 rounded-2xl shadow-md hover:scale-105 transition-all cursor-pointer overflow-hidden group">
+                <div class="flex justify-between items-start relative z-10">
+                    <div>
+                        <p class="text-white/80 text-sm font-medium">เอกสารทั้งหมดที่พบ</p>
+                        <h3 class="text-4xl font-bold mt-2 drop-shadow-md">${total}</h3>
+                    </div>
+                    <div class="p-3 rounded-full bg-white/20 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-layer-group text-2xl text-white"></i>
+                    </div>
+                </div>
+                <i class="fas fa-boxes absolute -bottom-6 -right-4 text-7xl text-white opacity-10 group-hover:opacity-20 transition-opacity"></i>
+            </div>`;
+            
+            const themes = [
+                { border: 'border-[#F57C00]', text: 'text-[#F57C00]', bg: 'bg-orange-50' },
+                { border: 'border-[#D32F2F]', text: 'text-[#D32F2F]', bg: 'bg-red-50' },
+                { border: 'border-[#4A2C6D]', text: 'text-[#4A2C6D]', bg: 'bg-purple-50' },
+                { border: 'border-[#008855]', text: 'text-[#008855]', bg: 'bg-emerald-50' },
+                { border: 'border-[#0288D1]', text: 'text-[#0288D1]', bg: 'bg-sky-50' }
+            ];
+
+            let i = 0;
+            for(let cat in categories) {
+                const theme = themes[i % themes.length];
+                const iconClass = getCategoryIcon(cat);
+                gridHtml += `
+                <div onclick="setDashFilter('${cat}')" class="relative bg-white p-6 rounded-2xl shadow-sm border-l-4 ${theme.border} hover:shadow-md hover:scale-105 transition-all cursor-pointer overflow-hidden group">
                     <div class="flex justify-between items-start relative z-10">
-                        <div>
-                            <p class="text-white/80 text-sm font-medium">เอกสารทั้งหมดรวม</p>
-                            <h3 class="text-4xl font-bold mt-2 drop-shadow-md">${res.stats.total}</h3>
+                        <div class="w-3/4">
+                            <p class="text-slate-500 text-sm truncate font-medium" title="${cat}">${cat}</p>
+                            <h3 class="text-3xl font-bold text-[#003366] mt-2">${categories[cat]}</h3>
                         </div>
-                        <div class="p-3 rounded-full bg-white/20 group-hover:scale-110 transition-transform">
-                            <i class="fas fa-layer-group text-2xl text-white"></i>
+                        <div class="p-3 rounded-full ${theme.bg} ${theme.text} group-hover:scale-110 transition-transform shadow-inner">
+                            <i class="${iconClass} text-xl"></i>
                         </div>
                     </div>
-                    <i class="fas fa-boxes absolute -bottom-6 -right-4 text-7xl text-white opacity-10 group-hover:opacity-20 transition-opacity"></i>
+                    <i class="${iconClass} absolute -bottom-5 -right-4 text-6xl ${theme.text} opacity-[0.04] group-hover:opacity-10 transition-opacity"></i>
                 </div>`;
-                
-                // 2. การ์ดแยกตามหมวดหมู่ (Categories)
-                const themes = [
-                    { border: 'border-[#F57C00]', text: 'text-[#F57C00]', bg: 'bg-orange-50' },
-                    { border: 'border-[#D32F2F]', text: 'text-[#D32F2F]', bg: 'bg-red-50' },
-                    { border: 'border-[#4A2C6D]', text: 'text-[#4A2C6D]', bg: 'bg-purple-50' },
-                    { border: 'border-[#008855]', text: 'text-[#008855]', bg: 'bg-emerald-50' },
-                    { border: 'border-[#0288D1]', text: 'text-[#0288D1]', bg: 'bg-sky-50' }
-                ];
-
-                let i = 0;
-                for(let cat in res.stats.categories) {
-                    const theme = themes[i % themes.length];
-                    const iconClass = getCategoryIcon(cat);
-                    
-                    gridHtml += `
-                    <div onclick="filterFromDashboard('${cat}')" class="relative bg-white p-6 rounded-2xl shadow-sm border-l-4 ${theme.border} hover:shadow-md hover:scale-105 transition-all cursor-pointer overflow-hidden group">
-                        <div class="flex justify-between items-start relative z-10">
-                            <div class="w-3/4">
-                                <p class="text-slate-500 text-sm truncate font-medium" title="${cat}">${cat}</p>
-                                <h3 class="text-3xl font-bold text-[#003366] mt-2">${res.stats.categories[cat]}</h3>
-                            </div>
-                            <div class="p-3 rounded-full ${theme.bg} ${theme.text} group-hover:scale-110 transition-transform shadow-inner">
-                                <i class="${iconClass} text-xl"></i>
-                            </div>
-                        </div>
-                        <i class="${iconClass} absolute -bottom-5 -right-4 text-6xl ${theme.text} opacity-[0.04] group-hover:opacity-10 transition-opacity"></i>
-                    </div>`;
-                    i++;
-                }
-                grid.innerHTML = gridHtml;
-
-                const ul = document.getElementById('recentList');
-                ul.innerHTML = res.stats.recent.map(r => `<li class="border-b pb-2"><div class="font-medium text-[#003366]">${r.subject}</div><div class="text-xs text-slate-400"><i class="far fa-clock"></i> ${new Date(r.date).toLocaleDateString('th-TH')}</div></li>`).join('');
-
-                const ctx = document.getElementById('catChart').getContext('2d');
-                if (chartInstance) chartInstance.destroy();
-                chartInstance = new Chart(ctx, {
-                    type: 'bar',
-                    data: { labels: Object.keys(res.stats.categories), datasets: [{ label: 'จำนวน', data: Object.values(res.stats.categories), backgroundColor: ['#003366', '#4A2C6D', '#D32F2F', '#F57C00', '#FBC02D'] }] },
-                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
-                });
+                i++;
             }
+            grid.innerHTML = gridHtml;
+
+            // 4. วาด Interactive Chart
+            const ctx = document.getElementById('catChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: Object.keys(categories), datasets: [{ label: 'จำนวน', data: Object.values(categories), backgroundColor: ['#003366', '#4A2C6D', '#D32F2F', '#F57C00', '#FBC02D'] }] },
+                options: { 
+                    responsive: true, 
+                    plugins: { legend: { display: false } }, 
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+                    onHover: (event, chartElement) => {
+                        event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+                    },
+                    onClick: (e, elements) => {
+                        // กดที่แท่งกราฟ เพื่อ Filter
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const label = chartInstance.data.labels[index];
+                            setDashFilter(label);
+                        }
+                    }
+                }
+            });
+
+            // 5. วาด Recent List (คลิกที่ชื่อเรื่องแล้วเปิดไฟล์ได้เลย)
+            let sortedDocs = [...filteredDocs].sort((a, b) => new Date(b[9]) - new Date(a[9])); // เรียงตามเวลาล่าสุด
+            let recent = sortedDocs.slice(0, 5);
+            const ul = document.getElementById('recentList');
+            ul.innerHTML = recent.map(d => {
+                let files = [];
+                try { files = JSON.parse(d[7] || '[]'); } catch(e){}
+                let link = files.length > 0 ? files[0] : '#';
+                let target = files.length > 0 ? 'target="_blank"' : '';
+                return `
+                <li class="border-b pb-2 hover:bg-blue-50 transition-colors rounded p-2 cursor-pointer" onclick="if('${link}' !== '#') window.open('${link}', '_blank')">
+                    <div class="font-medium text-[#003366] hover:text-blue-500 transition-colors"><i class="${getCategoryIcon(d[4])} text-slate-400 mr-1"></i> ${d[3]}</div>
+                    <div class="text-xs text-slate-500 mt-1"><i class="far fa-clock"></i> ลงวันที่: ${new Date(d[2]).toLocaleDateString('th-TH')} | หมวดหมู่: ${d[4]}</div>
+                </li>`;
+            }).join('');
+
+            // 6. วาดตาราง Dashboard ด้านล่าง
+            const tbody = document.getElementById('dashDocTableBody');
+            tbody.innerHTML = filteredDocs.map(d => buildTableRow(d, 'dashDocs')).join('');
         }
 
-        function filterFromDashboard(categoryName) {
-            nav('allDocs');
-            document.getElementById('tableCatFilter').value = categoryName;
-            setTimeout(renderAllDocsTable, 500); 
+        function setDashFilter(cat) {
+            document.getElementById('dashCatFilter').value = cat;
+            renderDashboard();
+            document.getElementById('dashDocTableBody').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function clearDashFilters() {
+            document.getElementById('dashStartDate').value = '';
+            document.getElementById('dashEndDate').value = '';
+            document.getElementById('dashCatFilter').value = '';
+            document.getElementById('dashSearch').value = '';
+            renderDashboard();
         }
 
         // --- Render Tables & Version Badges ---
-        async function loadDocs(viewType) {
-            const res = await apiCall('getDocs', { role: user.role, username: user.username, viewType: viewType });
-            if(res.status !== 'success') return;
-            allDocsData = res.docs; 
-            if(viewType === 'allDocs') renderAllDocsTable();
-            else renderMyDocsTable();
-        }
-
         function sortTable(colIndex) {
             if(sortCol === colIndex) sortAsc = !sortAsc;
             else { sortCol = colIndex; sortAsc = true; }
@@ -388,11 +507,12 @@
                 return 0;
             });
             renderAllDocsTable();
+            renderDashboard();
         }
 
         function buildTableRow(d, type) {
             const files = JSON.parse(d[7] || '[]');
-            const links = files.map((f, i) => `<a href="${f}" target="_blank" class="inline-block bg-[#0288D1] text-white px-2 py-1 rounded shadow hover:bg-blue-600 transition-colors text-xs mr-2 mb-1"><i class="fas fa-file-alt"></i> ล่าสุด ${i+1}</a>`).join('');
+            const links = files.map((f, i) => `<a href="${f}" target="_blank" class="inline-block bg-[#0288D1] text-white px-3 py-1 rounded shadow hover:bg-blue-600 transition-colors text-xs mr-2 mb-1"><i class="fas fa-file-alt"></i> เปิดไฟล์ ${i+1}</a>`).join('');
             
             let versions = [];
             try { versions = JSON.parse(d[11] || '[]'); } catch(e){}
@@ -410,12 +530,13 @@
             }
 
             let actionBtns = '';
-            if (user.role !== 'Guest') {
+            // ปุ่มจัดการจะแสดงเมื่อเป็นโหมด myDocs หรือ allDocs (Admin) เท่านั้น 
+            if (user.role !== 'Guest' && type !== 'dashDocs') {
                 actionBtns = `
-                    <div class="flex space-x-1 mt-1">
+                    <div class="flex space-x-1 mt-2">
                         <button onclick="openVersionModal('${d[0]}')" class="bg-green-100 text-green-700 hover:bg-green-200 px-2 py-1 rounded text-xs border border-green-200" title="อัปเดตเป็นเอกสารปีใหม่ (ย้ายของเดิมลงประวัติ)"><i class="fas fa-level-up-alt"></i> อัปเดต</button>
                         <button onclick="openDocModal('${d[0]}')" class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-2 py-1 rounded text-xs border border-blue-200" title="แก้ไขข้อมูลปัจจุบัน (แก้คำผิด)"><i class="fas fa-edit"></i> แก้ไข</button>
-                        <button onclick="delDoc('${d[0]}', '${type}')" class="bg-red-100 text-red-700 hover:bg-red-200 px-2 py-1 rounded text-xs border border-red-200" title="ลบ"><i class="fas fa-trash-alt"></i></button>
+                        <button onclick="delDoc('${d[0]}')" class="bg-red-100 text-red-700 hover:bg-red-200 px-2 py-1 rounded text-xs border border-red-200" title="ลบ"><i class="fas fa-trash-alt"></i></button>
                     </div>`;
             }
 
@@ -427,11 +548,13 @@
                 <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[200px]">${d[3]}<br><span class="text-xs text-slate-400">ลงวันที่: ${new Date(d[2]).toLocaleDateString('th-TH')} | ปีงบ: ${d[8]}</span></td>
                 <td class="p-3"><span class="px-2 py-1 bg-slate-200 rounded-full text-xs"><i class="${getCategoryIcon(d[4])} mr-1"></i>${d[4]}</span>${subCatHtml}</td>
                 <td class="p-3 text-xs text-slate-600">${d[5]}</td>
-                <td class="p-3">${actionBtns}</td>
+                <td class="p-3">
+                    <div>${links || '<span class="text-xs text-slate-400">- ไม่มีไฟล์ -</span>'}</div>
+                    ${actionBtns}
+                </td>
             </tr>
             <tr class="file-row border-b bg-slate-50/50">
                 <td colspan="5" class="p-2 pl-4">
-                    <div><span class="text-xs font-bold text-[#003366] mr-2">ไฟล์ปัจจุบัน (ปี ${d[8]}):</span> ${links || '<span class="text-xs text-slate-400">- ไม่มีไฟล์ -</span>'}</div>
                     ${oldLinksHtml}
                 </td>
             </tr>`;
@@ -450,7 +573,8 @@
         }
 
         function renderMyDocsTable() {
-            document.getElementById('docTableBody').innerHTML = allDocsData.map(d => buildTableRow(d, 'myDocs')).join('');
+            const myDocs = allDocsData.filter(d => d[6] === user.username);
+            document.getElementById('docTableBody').innerHTML = myDocs.map(d => buildTableRow(d, 'myDocs')).join('');
         }
 
         // --- Form Options ---
@@ -469,10 +593,18 @@
             const res = await apiCall('getCategories', {});
             const select = document.getElementById('docCat');
             const filterSelect = document.getElementById('tableCatFilter');
+            const dashCatFilter = document.getElementById('dashCatFilter');
+            
             select.innerHTML = '<option value="">-- เลือกหมวดหมู่หลัก --</option>';
             filterSelect.innerHTML = '<option value="">-- แสดงทุกหมวดหมู่ --</option>';
+            dashCatFilter.innerHTML = '<option value="">-- ทุกหมวดหมู่ --</option>';
+            
             if(res.status === 'success') {
-                res.categories.forEach(c => { select.innerHTML += `<option value="${c}">${c}</option>`; filterSelect.innerHTML += `<option value="${c}">${c}</option>`; });
+                res.categories.forEach(c => { 
+                    select.innerHTML += `<option value="${c}">${c}</option>`; 
+                    filterSelect.innerHTML += `<option value="${c}">${c}</option>`; 
+                    dashCatFilter.innerHTML += `<option value="${c}">${c}</option>`; 
+                });
                 globalSubCats = res.subCategories || {};
             }
         }
@@ -485,29 +617,6 @@
                 globalSubCats[mainCat].forEach(s => { subSelect.innerHTML += `<option value="${s}" ${(s === selectedSub) ? 'selected' : ''}>${s}</option>`; });
             }
         }
-
-        // --- ล็อกอิน ---
-        document.getElementById('loginForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const pass = await hashString(document.getElementById('logPass').value);
-            const res = await apiCall('login', { username: document.getElementById('logUser').value, password: pass });
-            if (res.status === 'success') {
-                user = res.user;
-                document.getElementById('authPage').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
-                document.getElementById('userNameDisplay').innerText = `${user.fullName}`;
-                document.getElementById('docDept').value = user.department; 
-                
-                if (user.role === 'Admin') {
-                    document.getElementById('adminMenu').classList.remove('hidden');
-                    document.getElementById('btnManageCat').classList.remove('hidden'); 
-                    document.getElementById('menu-allDocs').classList.remove('hidden');
-                } else {
-                    document.getElementById('menu-myDocs').classList.remove('hidden');
-                }
-                initFiscalYear(); loadCategories(); nav('dashboard');
-            } else Swal.fire('ผิดพลาด', res.message, 'error');
-        };
 
         function openDocModal(docId = null) {
             document.getElementById('uploadForm').reset();
@@ -597,15 +706,18 @@
             if (res.status === 'success') {
                 Swal.fire('สำเร็จ', 'บันทึกข้อมูลเรียบร้อย', 'success');
                 document.getElementById('addDocModal').classList.add('hidden');
-                nav(user.role === 'Admin' ? 'allDocs' : 'myDocs');
+                await refreshData();
             } else Swal.fire('ผิดพลาด', res.message, 'error');
         };
 
-        async function delDoc(id, type) {
+        async function delDoc(id) {
             const confirm = await Swal.fire({ title: 'ยืนยันการลบ?', text:'ข้อมูลและประวัติเอกสารทั้งหมดจะหายไป!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'ลบเลย!' });
             if(confirm.isConfirmed) {
                 const res = await apiCall('deleteDoc', { id });
-                if(res.status === 'success') { Swal.fire('ลบแล้ว!', '', 'success'); loadDocs(type); }
+                if(res.status === 'success') { 
+                    Swal.fire('ลบแล้ว!', '', 'success'); 
+                    await refreshData(); 
+                }
             }
         }
         
@@ -635,6 +747,22 @@
                 }
             }
         }
+
+        // โค้ดสมัครสมาชิก และ ลืมรหัสผ่าน
+        document.getElementById('registerForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const pass = await hashString(document.getElementById('regPass').value);
+            const res = await apiCall('register', { username: document.getElementById('regUser').value, password: pass, fullName: document.getElementById('regName').value, department: document.getElementById('regDept').value, email: document.getElementById('regEmail').value, pdpaConsent: new Date().toISOString() });
+            if (res.status === 'success') { Swal.fire('สำเร็จ', 'สมัครสมาชิกเรียบร้อย', 'success'); toggleAuth('loginForm'); document.getElementById('registerForm').reset(); }
+            else Swal.fire('ผิดพลาด', res.message, 'error');
+        };
+
+        document.getElementById('forgotForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const res = await apiCall('forgotPassword', { username: document.getElementById('forUser').value, email: document.getElementById('forEmail').value });
+            if (res.status === 'success') { Swal.fire('สำเร็จ', res.message, 'success'); toggleAuth('loginForm'); document.getElementById('forgotForm').reset(); }
+            else Swal.fire('ผิดพลาด', res.message, 'error');
+        };
     </script>
 </body>
 </html>
