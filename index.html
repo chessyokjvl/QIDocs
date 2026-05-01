@@ -97,7 +97,7 @@
         <main class="flex-1 bg-slate-50 p-6 overflow-y-auto w-full">
             <section id="sec-dashboard" class="space-y-6">
                 <h2 class="text-2xl font-bold border-b pb-2 text-[#003366]">ภาพรวมคลังเอกสาร</h2>
-                <div id="dashboardGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+                <div id="dashboardGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
                     <div class="bg-white p-6 rounded-2xl shadow-sm"><canvas id="catChart"></canvas></div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm"><h4 class="font-bold mb-4 text-[#003366]">เพิ่มล่าสุด</h4><ul id="recentList" class="space-y-3 text-sm"></ul></div>
@@ -283,22 +283,67 @@
             }
         };
 
-        // --- Dashboard Grid ---
+        // --- Logic: เลือก Icon ตามชื่อหมวดหมู่ ---
+        function getCategoryIcon(catName) {
+            const name = (catName || '').toLowerCase();
+            if(name.includes('qp') || name.includes('procedure') || name.includes('ระเบียบ')) return 'fas fa-book';
+            if(name.includes('wi') || name.includes('instruction') || name.includes('วิธีปฏิบัติ')) return 'fas fa-clipboard-list';
+            if(name.includes('form') || name.includes('แบบฟอร์ม')) return 'fas fa-file-signature';
+            if(name.includes('order') || name.includes('คำสั่ง')) return 'fas fa-bullhorn';
+            if(name.includes('นโยบาย') || name.includes('policy')) return 'fas fa-landmark';
+            if(name.includes('คู่มือ') || name.includes('manual')) return 'fas fa-book-medical';
+            if(name.includes('รายงาน') || name.includes('report')) return 'fas fa-chart-line';
+            if(name.includes('ความเสี่ยง') || name.includes('risk')) return 'fas fa-exclamation-triangle';
+            return 'fas fa-folder'; // ค่าเริ่มต้น
+        }
+
+        // --- Dashboard Grid (แบบมี Icon & Watermark) ---
         async function loadDash() {
             const res = await apiCall('getDashboard', {});
             if (res.status === 'success') {
                 const grid = document.getElementById('dashboardGrid');
-                let gridHtml = `<div onclick="filterFromDashboard('')" class="bg-gradient-to-br from-[#003366] to-[#0288D1] text-white p-6 rounded-2xl shadow-md hover:scale-105 transition-transform cursor-pointer">
-                    <p class="text-white/80 text-sm">เอกสารทั้งหมดรวม</p>
-                    <h3 class="text-4xl font-bold mt-1">${res.stats.total}</h3>
+                
+                // 1. การ์ดรวมเอกสารทั้งหมด (Total)
+                let gridHtml = `
+                <div onclick="filterFromDashboard('')" class="relative bg-gradient-to-br from-[#003366] to-[#0288D1] text-white p-6 rounded-2xl shadow-md hover:scale-105 transition-all cursor-pointer overflow-hidden group">
+                    <div class="flex justify-between items-start relative z-10">
+                        <div>
+                            <p class="text-white/80 text-sm font-medium">เอกสารทั้งหมดรวม</p>
+                            <h3 class="text-4xl font-bold mt-2 drop-shadow-md">${res.stats.total}</h3>
+                        </div>
+                        <div class="p-3 rounded-full bg-white/20 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-layer-group text-2xl text-white"></i>
+                        </div>
+                    </div>
+                    <i class="fas fa-boxes absolute -bottom-6 -right-4 text-7xl text-white opacity-10 group-hover:opacity-20 transition-opacity"></i>
                 </div>`;
                 
-                const colors = ['border-[#F57C00]', 'border-[#D32F2F]', 'border-[#4A2C6D]', 'border-[#008855]'];
+                // 2. การ์ดแยกตามหมวดหมู่ (Categories)
+                const themes = [
+                    { border: 'border-[#F57C00]', text: 'text-[#F57C00]', bg: 'bg-orange-50' },
+                    { border: 'border-[#D32F2F]', text: 'text-[#D32F2F]', bg: 'bg-red-50' },
+                    { border: 'border-[#4A2C6D]', text: 'text-[#4A2C6D]', bg: 'bg-purple-50' },
+                    { border: 'border-[#008855]', text: 'text-[#008855]', bg: 'bg-emerald-50' },
+                    { border: 'border-[#0288D1]', text: 'text-[#0288D1]', bg: 'bg-sky-50' }
+                ];
+
                 let i = 0;
                 for(let cat in res.stats.categories) {
-                    gridHtml += `<div onclick="filterFromDashboard('${cat}')" class="bg-white p-6 rounded-2xl shadow-sm border-l-4 ${colors[i%colors.length]} hover:shadow-md hover:scale-105 transition-all cursor-pointer">
-                        <p class="text-slate-500 text-sm truncate">${cat}</p>
-                        <h3 class="text-3xl font-bold text-[#003366] mt-1">${res.stats.categories[cat]}</h3>
+                    const theme = themes[i % themes.length];
+                    const iconClass = getCategoryIcon(cat);
+                    
+                    gridHtml += `
+                    <div onclick="filterFromDashboard('${cat}')" class="relative bg-white p-6 rounded-2xl shadow-sm border-l-4 ${theme.border} hover:shadow-md hover:scale-105 transition-all cursor-pointer overflow-hidden group">
+                        <div class="flex justify-between items-start relative z-10">
+                            <div class="w-3/4">
+                                <p class="text-slate-500 text-sm truncate font-medium" title="${cat}">${cat}</p>
+                                <h3 class="text-3xl font-bold text-[#003366] mt-2">${res.stats.categories[cat]}</h3>
+                            </div>
+                            <div class="p-3 rounded-full ${theme.bg} ${theme.text} group-hover:scale-110 transition-transform shadow-inner">
+                                <i class="${iconClass} text-xl"></i>
+                            </div>
+                        </div>
+                        <i class="${iconClass} absolute -bottom-5 -right-4 text-6xl ${theme.text} opacity-[0.04] group-hover:opacity-10 transition-opacity"></i>
                     </div>`;
                     i++;
                 }
@@ -380,7 +425,7 @@
             <tr class="main-row hover:bg-slate-50 transition-colors border-b">
                 <td class="p-3 font-mono text-xs text-[#003366]">${d[1]}</td>
                 <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[200px]">${d[3]}<br><span class="text-xs text-slate-400">ลงวันที่: ${new Date(d[2]).toLocaleDateString('th-TH')} | ปีงบ: ${d[8]}</span></td>
-                <td class="p-3"><span class="px-2 py-1 bg-slate-200 rounded-full text-xs">${d[4]}</span>${subCatHtml}</td>
+                <td class="p-3"><span class="px-2 py-1 bg-slate-200 rounded-full text-xs"><i class="${getCategoryIcon(d[4])} mr-1"></i>${d[4]}</span>${subCatHtml}</td>
                 <td class="p-3 text-xs text-slate-600">${d[5]}</td>
                 <td class="p-3">${actionBtns}</td>
             </tr>
